@@ -43,6 +43,8 @@ var bottomedge;
 var turn = false;
 var lastturn; 
 
+var flag;
+
 var rail = [];
 
 for (var i = 12; i < g_canvas.width; i += 24) {
