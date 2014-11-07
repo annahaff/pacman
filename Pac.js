@@ -27,11 +27,10 @@ Pacman.prototype.y = 24;                     //top left y
 Pacman.prototype.width = tile_width;
 Pacman.prototype.height = tile_height;
 Pacman.prototype.cx = 24+tile_width/2;                    //center x
-Pacman.prototype.cy = 24+ tile_height/2;                    //center y
+Pacman.prototype.cy = 24+tile_height/2;                   //center y
 
 Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
-Pacman.prototype.mazecollision = false;
 
 var pacman = Pacman.prototype;
 
@@ -52,19 +51,6 @@ for (var i = 12; i < g_canvas.width; i += 24) {
     }
 }
 
-for (var i = 0; i < rail.length; i++) {
-    //console.log(rail[i]);
-
-}
-
-Pacman.prototype.keepGoing = function(direction, x, y)
-{
-
-}
-
-var lastturn = "";
-
-
 Pacman.prototype.update = function (du) {
     var prevX = this.x;
     var prevY = this.y;
@@ -83,151 +69,115 @@ Pacman.prototype.update = function (du) {
     }
     
 
-    if (this.x != (g_canvas.width-this.width) && keys[this.GO_RIGHT]) {
-        //face = rightedge
-        //when pacman is moving right his x-coordinate is increasing...
-        //the y coordinate stays the same
-        //pacman can only turn to the right if he is on a horizontal rail
-
+    if (flag === "right" || (keys[this.GO_RIGHT])) {
+        flag = "right";
         for (var i = 0; i < rail.length; i++) {
             
-            /*if (this.cy != rail[i][1])
-            {
-                if (lastturn === "down")
+            if (this.cy === rail[i][1]) {
+                
+                var nextXVel = 1;
+                var nextYVel = 0;
+                var testNextX = this.x + nextXVel;
+                var testNextY = this.y + nextYVel;
+                
+                //make sure we are not trying to turn into a wall
+                if (!this.checkMazeCollision(nextXVel, nextYVel, testNextX, testNextY))
                 {
-                    while (this.cy < rail[i][1])
-                    {
-                        this.y += this.yVel;
-                        this.cy = this.y + halfwidth;
-
-                        if (this.cy === rail[i][1])
-                        {
-                            console.log("===");
-                            this.xVel = 1;
-                            this.yVel = 0;
-                            lastturn === "right";
-                            return;
-                        }
-                    }
-                }
-                else if (lastturn === "up")
-                {
-                    while (this.cy > rail[i][1])
-                    {
-                        this.y += this.yVel;
-                        this.cy = this.y + halfwidth;
-
-                        if (this.cy === rail[i][1])
-                        {
-                            console.log("===");
-                            this.xVel = 1;
-                            this.yVel = 0;
-                            lastturn === "right";
-                            return;
-                        }
-                    }
-
+                    flag = "";
+                    this.xVel = nextXVel;
+                    this.yVel = nextYVel;
                 }
             }
-            else
-            {*/                    
-                if (this.cy === rail[i][1]) {
-                    this.xVel = 1;
-                    this.yVel = 0;
-                    break;
-                }
-            //}
         }
     }
 
-    else if (this.x != 0 && keys[this.GO_LEFT]) {
-        //face = leftedge
+    else if (flag === "left" || (keys[this.GO_LEFT])) {
+        flag = "left";
         for (var i = 0; i < rail.length; i++) {
 
             if (this.cy === rail[i][1]) {
-                this.xVel = -1;
-                this.yVel = 0;
+                
+                var nextXVel = -1;
+                var nextYVel = 0;
+                var testNextX = this.x + nextXVel;
+                var testNextY = this.y + nextYVel;
+                
+                //make sure we are not trying to turn into a wall
+                if (!this.checkMazeCollision(nextXVel, nextYVel, testNextX, testNextY))
+                {
+                    flag = "";
+                    this.xVel = nextXVel;
+                    this.yVel = nextYVel;
+                }          
             }
-            /*while (this.cy != rail[i][1])
-            {
-                this.x += this.xVel;
-                this.y += this.yVel;
-                this.cx = this.x + halfwidth;
-                this.cy = this.y + halfwidth;
-
-                if (this.cy === rail[i][1]) {
-                    this.xVel = -1;
-                    this.yVel = 0;
-                    break;
-                }
-            }*/
-
         }
     }
 
-    else if (this.y != 0 && keys[this.GO_UP]) {
-        //face = topedge;
+    else if (flag === "up" || (keys[this.GO_UP])) {
+        flag = "up";
         for (var i = 0; i < rail.length; i++) {
 
-            
             if (this.cx === rail[i][0]) {
-                this.xVel = 0;
-                this.yVel = -1;
-                lastturn = "up";
+                
+                var nextXVel = 0;
+                var nextYVel = -1;
+                var testNextX = this.x + nextXVel;
+                var testNextY = this.y + nextYVel;
+                
+                //make sure we are not trying to turn into a wall
+                if (!this.checkMazeCollision(nextXVel, nextYVel, testNextX, testNextY))
+                {
+                    flag = "";
+                    this.xVel = nextXVel;
+                    this.yVel = nextYVel;
+                }              
             }
-
-            /*while (this.cx != rail[i][0])
-            {
-                this.x += this.xVel;
-                this.y += this.yVel;
-                this.cx = this.x + halfwidth;
-                this.cy = this.y + halfwidth;
-            }*/
         } 
     }
-    else if (this.y != (g_canvas.height-this.height) && keys[this.GO_DOWN]) {
-        //face = bottomedge;
+
+    else if (flag === "down" || (keys[this.GO_DOWN])) {
+        flag = "down";
         for (var i = 0; i < rail.length; i++) {
-            /*while (this.cx != rail[i][0])
-            {
-                this.x += this.xVel;
-                this.y += this.yVel;
-                this.cx = this.x + halfwidth;
-                this.cy = this.y + halfwidth;            
-            }*/
+            
             if (this.cx === rail[i][0]) {
-                this.xVel = 0;
-                this.yVel = 1;
-                lastturn = "down";
+                
+                var nextXVel = 0;
+                var nextYVel = 1;
+                var testNextX = this.x + nextXVel;
+                var testNextY = this.y + nextYVel;
+                
+                //make sure we are not trying to turn into a wall
+                if (!this.checkMazeCollision(nextXVel, nextYVel, testNextX, testNextY))
+                {
+                    flag = "";
+                    this.xVel = nextXVel;
+                    this.yVel = nextYVel;
+                }           
             }
         }
-    }
-
-    else if (pacman.mazecollision || (face === "leftedge" && (leftedge === 12)) ||
-        (face === "rightedge" && (rightedge === g_canvas.width)) || 
-        (face === "topedge" && (topedge === 12 )) ||  
-        (face === "bottomedge" && (bottomedge === g_canvas.height))) 
-    {
-        this.halt();
-        //console.log("halt");
     }
 
     //----------------------------------------------------------------------------
     //console.log("still inside update routine?");
     //console.log("x: " + this.x + ", y: " +  this.y);
     //check for collision to the maze tiles
-    //var tempXVel = 0;
-    //if(keys[this.GO_RIGHT]){ var tempXVel = 1};
+    //------------------------------------------------------------------------------
+
+    console.log(flag);
+
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
-    var collided = this.checkMazeCollision(prevX, prevY, newNextX, newNextY);
-    //------------------------------------------------------------------------------
+
+    if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY))
+    {
+        this.halt();
+    }
 
     this.x += this.xVel;
     this.y += this.yVel;
     this.cx = this.x + halfwidth;
-    this.cy = this.y + halfwidth;
-    
+    this.cy = this.y + halfwidth; 
+        
 };
 
 
@@ -237,33 +187,21 @@ Pacman.prototype.halt = function()
     this.yVel = 0;
 }
 
-//--------------------------Bætt við
-Pacman.prototype.checkMazeCollision = function(prevX, prevY, nextX, nextY){
-    //24 is the tile size
-    //var tileX = Math.floor(prevX/24);
-   // var tileY = Math.floor(prevY/24);
+Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) {
+    //24 is the tile size  global variable tile_width)
 
     var xFactor = 0;
     var yFactor = 0;
-    var tempXVel = this.xVel;
-    var tempYVel = this.yVel;
-
-    if(keys[this.GO_RIGHT]){ tempXVel = 1;}
-    if(keys[this.GO_DOWN]) { tempYVel = 1;}
 
     if(tempXVel === 1) xFactor = 23;
     if(tempYVel === 1) yFactor = 23;
 
-    var nextTileX = Math.floor((nextX+xFactor)/24);
-    var nextTileY = Math.floor((nextY+yFactor)/24);
-    console.log("nextTileX: " + nextTileX  + ", nextTileY" + nextTileY);
+    var nextTileX = Math.floor((nextX+xFactor)/tile_width);
+    var nextTileY = Math.floor((nextY+yFactor)/tile_width);
 
-   if(g_levelMap[nextTileY][nextTileX] == "m"){
-        //this.x = prevX;
-        //this.y = prevY;
-        this.halt();  
+    if(g_levelMap[nextTileY][nextTileX] === "m") {
+        return true;  
     }
-
 };
 
 
