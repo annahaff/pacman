@@ -50,25 +50,7 @@ var goingup = false;
 var goingdown = false;
 
 var turn = false;
-var lastturn; 
-
-var rail = [];
-
-for (var i = 12; i < g_canvas.width; i += 24) {
-    for (var j = 12; j < g_canvas.height; j += 24) {
-        rail.push([i, j]);
-    }
-}
-
-for (var i = 0; i < rail.length; i++) {
-    //console.log(rail[i]);
-
-}
-
-
-
 var lastturn = "";
-
 
 Ghost.prototype.update = function (du) {
     var prevX = this.xR;
@@ -126,18 +108,22 @@ Ghost.prototype.update = function (du) {
         }
     }
 
-    else if (ghost.mazecollision || leftedge === 12 ||
+    /*else if (ghost.mazecollision || leftedge === 12 ||
         (rightedge === g_canvas.width) || 
         (topedge === 12 ) ||  
         (bottomedge === g_canvas.height)) 
     {
         this.halt();
-    }
+    }*/
 
     //----------------------------------------------------------------------------
     var newNextX = this.xR + this.xVel;
     var newNextY = this.yR + this.yVel;
-    var collided = this.checkMazeCollision(prevX, prevY, newNextX, newNextY);
+    if(this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) 
+    {
+        this.halt();
+        this.turn();
+    }
     //------------------------------------------------------------------------------
 
     this.xR += this.xVel;
@@ -153,7 +139,7 @@ Ghost.prototype.turn = function()
     var pacman = entityManager._pacman[0];
     var Px = pacman.x;
     var Py = pacman.y;
-    console.log(Py);
+    //console.log(Py);
     var xdif = Px - this.xR;
     var ydif = Py - this.yR;
     var xdif2 = xdif;
@@ -287,13 +273,36 @@ Ghost.prototype.halt = function()
     this.yVel = 0;
 }
 
-//--------------------------Bætt við
-Ghost.prototype.checkMazeCollision = function(prevX, prevY, nextX, nextY){
-    //24 is the tile size
-    //var tileX = Math.floor(prevX/24);
-   // var tileY = Math.floor(prevY/24);
+Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) {
+    //24 is the tile size  global variable tile_width)
 
     var xFactor = 0;
+    var yFactor = 0;
+
+    if(tempXVel === 1) xFactor = 23;
+    if(tempYVel === 1) yFactor = 23;
+
+    var nextTileX = Math.floor((nextX+xFactor)/tile_width);
+    var nextTileY = Math.floor((nextY+yFactor)/tile_width);
+
+    if(g_levelMap[nextTileY][nextTileX] === "m") {
+        return true;  
+    }
+};
+
+
+//--------------------------Bætt við
+/*Ghost.prototype.checkMazeCollision = function(prevX, prevY, nextX, nextY){
+    //24 is the tile size
+    //var tileX = Math.floor(prevX/24);
+    // var tileY = Math.floor(prevY/24);
+
+
+
+
+
+
+    /*var xFactor = 0;
     var yFactor = 0;
     var tempXVel = this.xVel;
     var tempYVel = this.yVel;
@@ -313,9 +322,9 @@ Ghost.prototype.checkMazeCollision = function(prevX, prevY, nextX, nextY){
         //this.y = prevY;
         this.halt();
         this.turn();
-    }
+    }*/
 
-};
+//};
 
 Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
 

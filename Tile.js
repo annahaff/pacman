@@ -7,27 +7,34 @@
 /* jshint browser: true, devel: true, globalstrict: true */
 
 //Tile object
-function Tile(x, y, food, maze) {
+function Tile(x, y, type) {
     this.x = x;
     this.y = y;
-    this.isFood = food;
-    this.isMaze = maze;
+    this.type = type;
 }
 
 
 //drawing tiles stuff
-Tile.prototype.makeTile = function(ctx, x, y, isFood, isMaze) {
+Tile.prototype.makeTile = function(ctx, x, y, type) {
     util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
 
     //if tile is food, then draw food
-    if (isFood === true) {
+    if (type === "food") {
         util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 2.5);
     }
 
     //if tile is maze, then draw maze
-    else if (isMaze === true) {
+    else if (type === "maze") {
         util.fillBox(ctx, x, y, tile_width, tile_height, 'blue');
-        return;
+    }
+
+    else if (type === "ghostbox") {
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(x+1, y+1, tile_width-1, tile_height-1);
+    }
+
+    else if (type === "foodeaten") {
+        util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
     }
     
 };
@@ -37,24 +44,14 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
     var horizontalEdge = this.y + (tile_height/2);  //center y-coordinate
 
     //going up/down
-
     if ((nextY < horizontalEdge && prevY >= horizontalEdge) ||
         (nextY > horizontalEdge && prevY <= horizontalEdge))
     {
         if (nextX >= this.x && nextX <= this.x + tile_width)
         {
-            if (this.isFood) 
+            if (this.type === "food") 
             {
-                console.log("food");
-                //pacman.mazecollision = false;
-                this.isFood = false;              //pacman has eaten food
-            }
-
-            else if (this.isMaze) 
-            {
-                console.log("maze");
-                //pacman.mazecollision = true;
-                //pacman.mazecollide = true;
+                this.type = "foodeaten";              //pacman has eaten food
             }
         }
     }
@@ -64,15 +61,9 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
     {
         if (nextY >= this.y && nextY <= this.y + tile_height)
         {
-            if (this.isFood) 
+            if (this.type === "food") 
             {
-                this.isFood = false;              //pacman has eaten food
-            }
-
-            else if (this.isMaze) 
-            {
-                console.log("maze");
-                //pacman.mazecollide = true;
+                this.type = "foodeaten";              //pacman has eaten food
             }
         }
     }

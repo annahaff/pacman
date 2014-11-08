@@ -201,7 +201,9 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     var nextTileX = Math.floor((nextX+xFactor)/tile_width);
     var nextTileY = Math.floor((nextY+yFactor)/tile_width);
 
-    if(g_levelMap[nextTileY][nextTileX] === "m") {
+    if(g_levelMap[nextTileY][nextTileX] === "m" || 
+       g_levelMap[nextTileY][nextTileX] === "g") 
+    {
         return true;  
     }
 };
@@ -212,38 +214,22 @@ var b = 0;
 var positions = [18, 18, 18, 18];   //starting position
 
 Pacman.prototype.render = function (ctx) {
-    leftedge = this.x + this.height/2;
-    rightedge = leftedge + this.width/2;
-    topedge = this.y + this.width/2;
-    bottomedge = topedge + this.height/2;
-
     // going left
     if (this.xVel < 0) {
         positions = [51, 52, 53, 54];
-        face = "leftedge";
     }
     // going right
     else if (this.xVel > 0) {
         positions = [17, 18, 19, 20];
-        face = "rightedge";
     }
     // going up
     else if (this.yVel < 0) {
         positions = [0, 1, 2, 3];
-        face = "topedge";
     }
     // going down
     else if (this.yVel > 0) {
         positions = [34, 35, 36, 37];
-        face = "bottomedge";
     }
-    /*if (face === "topedge") console.log("topedge");
-    if (face === "bottomedge") console.log("bottomedge");
-    if (face === "leftedge") console.log("leftedge");
-    if (face === "rightedge") console.log("rightedge");*/
-    //console.log(face);
-    //console.log(leftedge);
-    //console.log(rightedge);
     g_sprites[positions[a]].drawAt(ctx, this.x, this.y);
     b += 0.5;
     if (b % 1 === 0) ++a;    
