@@ -13,8 +13,6 @@ function Pacman(descr) {
     }
 }
 
-
-
 Pacman.prototype.GO_LEFT   = 'A'.charCodeAt(0);
 Pacman.prototype.GO_RIGHT  = 'D'.charCodeAt(0);
 Pacman.prototype.GO_UP     = 'W'.charCodeAt(0);
@@ -32,9 +30,6 @@ Pacman.prototype.cy = 24+tile_height/2;                   //center y
 Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
 Pacman.prototype.flag;
-
-var pacman = Pacman.prototype;
-
 var rail = [];
 
 for (var i = 12; i < g_canvas.width; i += 24) {
@@ -76,6 +71,10 @@ Pacman.prototype.update = function (du) {
     var halfwidth = this.width/2;
     var board = Gameboard.prototype;
 
+    if (keys[this.GO_RIGHT] || keys[this.GO_LEFT] || keys[this.GO_UP] || keys[this.GO_DOWN])
+    {
+        this.flag = "";
+    }
     //check for food-tile collision
     for (var i = 0; i < board.tileArray.length; i++)
     {
@@ -83,19 +82,19 @@ Pacman.prototype.update = function (du) {
             nextX + halfwidth, nextY + halfwidth);
     }
 
-    if (this.flag === "right" || (keys[this.GO_RIGHT])) {
+    if (keys[this.GO_RIGHT] || this.flag === "right") {
         this.turn("right", this.cy, rail, 1, 0);
     }
 
-    else if (this.flag === "left" || (keys[this.GO_LEFT])) {
+    else if (keys[this.GO_LEFT] || this.flag === "left") {
         this.turn("left", this.cy, rail, -1, 0);
     }
 
-    else if (this.flag === "up" || (keys[this.GO_UP])) {
+    else if (keys[this.GO_UP] || this.flag === "up") {
         this.turn("up", this.cx, rail, 0, -1);
     }
 
-    else if (this.flag === "down" || (keys[this.GO_DOWN])) {
+    else if (keys[this.GO_DOWN] || this.flag === "down") {
         this.turn("down", this.cx, rail, 0, 1);
     }
 
@@ -112,6 +111,7 @@ Pacman.prototype.update = function (du) {
 
     if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY))
     {
+        this.flag = "";
         this.halt();
     }
 
@@ -119,7 +119,6 @@ Pacman.prototype.update = function (du) {
     this.y += this.yVel;
     this.cx = this.x + halfwidth;
     this.cy = this.y + halfwidth; 
-        
 };
 
 
@@ -144,6 +143,7 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     if(g_levelMap[nextTileY][nextTileX] === "m" || 
        g_levelMap[nextTileY][nextTileX] === "g") 
     {
+        console.log("halt");
         return true;  
     }
 };
