@@ -16,16 +16,16 @@ function Ghost(descr) {
 
 
 // Initial, inheritable, default values
-Ghost.prototype.xR = 72;                     //top left x
-Ghost.prototype.yR = 264;                     //top left y
+Ghost.prototype.xR = 72;                     //R stendur fyrir red, as in red ghost
+Ghost.prototype.yR = 264;                    
 
-Ghost.prototype.xG = 72;                     //top left x
+Ghost.prototype.xG = 72;                     //Green ghost
 Ghost.prototype.yG = 72;
 
-Ghost.prototype.xP = 192;                     //top left x
+Ghost.prototype.xP = 192;                     //Pink ghost
 Ghost.prototype.yP = 72;
 
-Ghost.prototype.xO = 192;                     //top left x
+Ghost.prototype.xO = 192;                     //Orange ghost
 Ghost.prototype.yO = 264;
 
 
@@ -108,17 +108,11 @@ Ghost.prototype.update = function (du) {
         }
     }
 
-    /*else if (ghost.mazecollision || leftedge === 12 ||
-        (rightedge === g_canvas.width) || 
-        (topedge === 12 ) ||  
-        (bottomedge === g_canvas.height)) 
-    {
-        this.halt();
-    }*/
-
+ 
     //----------------------------------------------------------------------------
     var newNextX = this.xR + this.xVel;
     var newNextY = this.yR + this.yVel;
+    //ef draugurinn klessir á vegg ætlum við að stoppa og snúa
     if(this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) 
     {
         this.halt();
@@ -133,44 +127,49 @@ Ghost.prototype.update = function (du) {
     
 };
 
-
+//Þetta fall snýr draugnum í þá átt sem er líklegust til að færa hann nær pacman
 Ghost.prototype.turn = function()
 {
     var pacman = entityManager._pacman[0];
-    var Px = pacman.x;
-    var Py = pacman.y;
+    var Px = pacman.x;                          // x hnit pacman
+    var Py = pacman.y;                          // y hnit pacman
     //console.log(Py);
-    var xdif = Px - this.xR;
-    var ydif = Py - this.yR;
+    var xdif = Px - this.xR;                    // Lengdin milli pacman og draugs á x-ás (gæti verið mínus tala)
+    var ydif = Py - this.yR;                    // Lengdin á milli pacman og draugs á y-ás (gæti verið mínus tala)
     var xdif2 = xdif;
     var ydif2 = ydif;
     if(xdif < 0){
-        xdif2 = xdif*-1;
+        xdif2 = xdif*-1;                        // algildið af lengdinni á x-ás
 
     }
     if(ydif < 0){
-        ydif2 = ydif*-1;
+        ydif2 = ydif*-1;                        // algildið af lengdinni á y-ás
     }
-
+    //Ef draugurinn er að fara til vinstri þegar hann klessir á vegginn, þá æthugum við fyrst hvort vænlegra er að færa drauginn eftir
+    //x-ás eða y-ás, ef það er vænlegra að færa hann eftir x-ás, þá er bara ein leið í boði, þannig að við vitum að það er bara
+    //vænlegt ef pacman er hægra megin við okkur. 
     if(goingleft){
-        goingleft = false;
+        goingleft = false;                        
         if((xdif2 > ydif2) && (xdif > 0)){
             goingright = true;
             this.xVel = 1;
             this.yVel = 0;
         }
-        else if(ydif < 0){
+        //Nú vitum við að við viljum ferðast eftir y-ás, athugum hvort pacman sé fyrir ofan eða neðan okkur.
+        else if(ydif < 0){                      //Er hann fyrir ofan?
             goingup = true;
             this.xVel = 0;
             this.yVel = -1;
         }
-        else{
+        else{                                      //Þá hlýtur hann að vera fyrir neðan
             goingdown = true;
             this.xVel = 0;
             this.yVel = 1;
         }
     }
-
+    //Ef draugurinn er að fara til hægri þegar hann klessir á vegginn, þá æthugum við fyrst hvort vænlegra er að færa drauginn eftir
+    //x-ás eða y-ás, ef það er vænlegra að færa hann eftir x-ás, þá er bara ein leið í boði, þannig að við vitum að það er bara
+    //vænlegt ef pacman er vinstra megin við okkur. 
     else if(goingright){
         goingright = false;
         if((xdif2 > ydif2) && (xdif < 0)){
@@ -178,6 +177,7 @@ Ghost.prototype.turn = function()
             this.xVel = -1;
             this.yVel = 0;
         }
+        //Hér vitum við að við viljum ferðast eftir y-ás, þannig að við athugum hvort pacman sé fyrir ofan eða neða okkur
         else if(ydif < 0){
             goingup = true;
             this.xVel = 0;
@@ -189,7 +189,8 @@ Ghost.prototype.turn = function()
             this.yVel = 1; 
         }
     }
-
+    //Ef draugurinn er að fara niður þegar hann klessir á vegg, þá athugum við fyrst hvort vænlegast sé að fara upp, það er að
+    //segja, hvort sniðugast sé að ferðast eftir y-ás og pacman sé fyrir ofan okkur.
     else if(goingdown){
         goingdown = false;
         if((ydif2 > xdif2) && (ydif < 0)){
@@ -197,18 +198,20 @@ Ghost.prototype.turn = function()
             this.xVel = 0;
             this.yVel = -1;
         }
-        else if(xdif > 0){
+        //Hér vitum við að við viljum ferðast eftir x-ás, þannig að við athugum hvort pacman sé hægra megin eða vinstra megin við okkur
+        else if(xdif > 0){              //Er hann hægra megin við okkur?
             goingright = true;
             this.xVel = 1;
             this.yVel = 0;
         }
-        else{
+        else{                           //Þá hlýtur hann að vera vinstra megin við okkur...
             goingleft = true;
             this.xVel = -1;
             this.yVel = 0;
         }
     }
-
+    //Ef draugurinn er að fara upp þegar hann klessir á vegg, þá athugum við fyrst hvort vænlegast sé að fara niðu, það er að
+    //segja, hvort sniðugast sé að ferðast eftir y-ás og pacman sé fyrir neðan okkur.
     else if(goingup){
         goingup = false;
         if((ydif2 > xdif2) && (ydif > 0)){
@@ -216,6 +219,7 @@ Ghost.prototype.turn = function()
             this.xVel = 0;
             this.yVel = 1;
         }
+        //Hér vitum við að við viljum ferðast eftir x-ás, þannig að við athugum hvort pacman sé hægra megin eða vinstra megin við okkur
         else if(xdif > 0){
             goingright = true;
             this.xVel = 1;
@@ -228,43 +232,7 @@ Ghost.prototype.turn = function()
         }  
     }
 
-    /*if(goingright || goingleft){
-        if(ydif < 0){
-            goingup = true;
-            goingright = false;
-            goingleft = false;
-            this.xVel = 0;
-            this.yVel = -1;
-            
-        }
-        else{
-            goingdown = true;
-            goingright = false;
-            goingleft = false;
-            this.xVel = 0;
-            this.yVel = 1;
-            
-        }
-    }
-    else if(goingup || goingdown){
-        if(xdif < 0){
-            goingleft = true;
-            goingdown = false;
-            goingup = false;
-            this.yVel = 0;
-            this.xVel = -1;
-           
-
-        }
-        else{
-            goingright = true;
-            goingup = false;
-            goingdown = false;
-            this.yVel = 0;
-            this.xVel = 1;
-        }
-    }
-    */
+    
 }
 
 Ghost.prototype.halt = function()
