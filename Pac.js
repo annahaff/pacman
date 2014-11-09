@@ -71,6 +71,14 @@ Pacman.prototype.update = function (du) {
     var halfwidth = this.width/2;
     var board = Gameboard.prototype;
 
+    
+    if (this.x > g_canvas.width) {
+        this.x = 0;
+    }
+    if (this.x < 0) {
+        this.x = g_canvas.width;
+    }
+
     if (keys[this.GO_RIGHT] || keys[this.GO_LEFT] || keys[this.GO_UP] || keys[this.GO_DOWN])
     {
         this.flag = "";
