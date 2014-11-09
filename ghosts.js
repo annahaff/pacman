@@ -64,12 +64,12 @@ Ghost.prototype.update = function (du) {
     var turn = false;
 
     //check for tile collision
-   
+   if(this.xR % 24 === 0 && this.yR % 24 === 0){
+        this.checkpos();
+   }
 
     if (this.xR != (g_canvas.width-this.width) && goingright) {
-        for (var i = 0; i < rail.length; i++) {
-            
-                         
+        for (var i = 0; i < rail.length; i++) {         
                 if (this.cy === rail[i][1]) {
                     this.xVel = 1;
                     this.yVel = 0;
@@ -80,7 +80,6 @@ Ghost.prototype.update = function (du) {
 
     else if (this.xR != 0 && goingleft) {
         for (var i = 0; i < rail.length; i++) {
-
             if (this.cy === rail[i][1]) {
                 this.xVel = -1;
                 this.yVel = 0;
@@ -112,12 +111,13 @@ Ghost.prototype.update = function (du) {
     //----------------------------------------------------------------------------
     var newNextX = this.xR + this.xVel;
     var newNextY = this.yR + this.yVel;
-    //ef draugurinn klessir á vegg ætlum við að stoppa og snúa
-    if(this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) 
-    {
-        this.halt();
-        this.turn();
-    }
+    
+
+    //if(this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) 
+    //{
+    //    this.halt();
+    //    this.turn();
+    //}
     //------------------------------------------------------------------------------
 
     this.xR += this.xVel;
@@ -127,8 +127,177 @@ Ghost.prototype.update = function (du) {
     
 };
 
+Ghost.prototype.checkpos = function()
+{
+    //ef draugurinn klessir á vegg ætlum við að stoppa og snúa
+    var pacman = entityManager._pacman[0];
+    var Px = pacman.x;                          // x hnit pacman
+    var Py = pacman.y;                          // y hnit pacman
+    //console.log(Py);
+    var xdif = Px - this.xR;                    // Lengdin milli pacman og draugs á x-ás (gæti verið mínus tala)
+    var ydif = Py - this.yR;                    // Lengdin á milli pacman og draugs á y-ás (gæti verið mínus tala)
+    var xdif2 = xdif;
+    var ydif2 = ydif;
+    if(xdif < 0){
+        xdif2 = xdif*-1;                        // algildið af lengdinni á x-ás
+    }
+    if(ydif < 0){
+        ydif2 = ydif*-1;                        // algildið af lengdinni á y-ás
+    }
+    var nextrightX = this.xR+1;
+    var nextleftX = this.xR-1;
+    var nextupY = this.yR-1;
+    var nextdownY = this.yR+1;
+    //athuga hvort sé veggur fyrir ofan
+    var wallup = this.checkMazeCollision(0, -1, this.xR, nextupY);
+    //athuga hvort sé veggur fyrir neðan      
+    var walldown = this.checkMazeCollision(0, 1, this.xR, nextdownY); 
+    //athuga hvort sé veggur til hægri
+    var wallright = this.checkMazeCollision(1, 0, nextrightX, this.yR);
+    //athuga hvort sé veggur til vinstri
+    var wallleft = this.checkMazeCollision(-1, 0, nextleftX, this.yR);
+    //console.log(wallup);
+    if(wallup || walldown || wallright || wallleft){
+        this.halt();
+    }
+    //ef það er ekki veggur fyrir ofan
+    if(wallup === false){
+        if(xdif2 >= ydif2){                                  //ef það er betra að ferðast eftir x-ás, þurfum við að athuga til hægri og vinstri
+            if(xdif > 0){                                   //ef pacman er hægra megin og það er ekki veggur til hægri, þá förum til hægri
+                if(wallright === false){
+                    this.goingright();
+                }
+                else if(wallright === true && ydif > 0){   //ef pacman er til hægri og það er veggur til hægri, þá ath við hvort pacman sé fyrir ofan eða neðan
+                    if(walldown === false){
+                        this.goingdown();                   //ef hann er fyrir neðan og það er ekki veggur fyrir neða, þá förum við niður
+                    }
+                    else{
+                        this.goingup();                     //annars upp
+                    }
+                }else{
+                    this.goingup();
+                }
+            }else if(xdif < 0){                             //ef pacman er vinstramegin förum við til vinstri nema þar sé veggur
+                if(wallleft === false){
+                    this.goingleft();
+                }
+                else if(wallleft === true && ydif > 0){
+                    if(walldown === false){                 //ef veggur er til vinstri og packman er fyrir neðan, þá förum við niður
+                        this.goingdown();
+                    }
+                    else{
+                        this.goingup();                     //annars upp
+                    }
+                }else{
+                    this.goingup();
+                }
+            }
+        }
+        else if(ydif >= 0){                                 //Ef það borgar sig að fara um y-ás, þá athugum við hvort pacman sé fyrir neðan
+            if(walldown === false){                         //ef hann er fyrir neðan og það er ekki veggur fyrir neðan, förum við niður
+                this.goingdown();
+            }
+            else if(walldown === true && xdif > 0){         //ef pacman er fyrir neðan en það er veggur fyrir neðan draug og pacman er hægra megin, förum við til hægri
+                if(wallright === false){
+                    this.goingright();
+                }
+                else{
+                    this.goingup();                         //annars upp
+                }
+            }else if(walldown === true && xdif < 0){           // ef pacman er vinstra megin, þá förum við til vinstri, nema ef veggur er, þá upp
+                if(wallleft === false){
+                    this.goingleft();
+                }
+                else{
+                    this.goingup();
+                }
+            }
+        }
+        else if(ydif < 0){
+            this.goingup();
+        }
+    }else if(wallup === true){                                                  // ef það hins vegar er veggur fyrir ofan
+        if(ydif2 >= xdif2 && ydif > 0){                                       //ef pacman er fyrir neðan og við viljum ferðast eftir y-ás
+            if(walldown === false){
+                this.goingdown();
+            }
+            else if(walldown === true && xdif > 0){                            //ef pacman er fyrir neðan en það er veggur fyrir neðan
+                if(wallright === false){
+                    this.goingright();
+                }
+                else{
+                    this.goingleft();
+                }
+            }
+            else if(walldown === true && xdif < 0){
+                if(wallleft === false){
+                    this.goingleft();
+                }
+                else{
+                    this.goingright();
+                }
+            }
+        }
+        else if(xdif > 0){                                                  //ef pacman er hægra megin
+            if(wallright === false){
+                this.goingright();
+            }
+            else{
+                this.goingleft();
+            }
+        }else{
+            if(wallleft === false){                                         //ef pacman er vinstra megin
+                this.goingleft();
+            }
+            else{
+                this.goingright();
+            }
+        }                                    
+    }
+}
+
+
+Ghost.prototype.goingright = function()
+{
+    goingright = true;
+    goingleft = false;
+    goingup = false;
+    goingdown = false;
+    this.xVel = 1;
+    this.yVel = 0;
+}
+
+Ghost.prototype.goingleft = function()
+{
+    goingright = false;
+    goingleft = true;
+    goingup = false;
+    goingdown = false;
+    this.xVel = -1;
+    this.yVel = 0;
+}
+
+Ghost.prototype.goingup = function()
+{
+    goingright = false;
+    goingleft = false;
+    goingup = true;
+    goingdown = false;
+    this.xVel = 0;
+    this.yVel = -1;
+}
+
+Ghost.prototype.goingdown = function()
+{
+    goingright = false;
+    goingleft = false;
+    goingup = false;
+    goingdown = true;
+    this.xVel = 0;
+    this.yVel = 1;
+}
 //Þetta fall snýr draugnum í þá átt sem er líklegust til að færa hann nær pacman
-Ghost.prototype.turn = function()
+/*Ghost.prototype.turn = function()
 {
     var pacman = entityManager._pacman[0];
     var Px = pacman.x;                          // x hnit pacman
@@ -231,9 +400,11 @@ Ghost.prototype.turn = function()
             this.yVel = 0;
         }  
     }
+    
 
     
 }
+*/
 
 Ghost.prototype.halt = function()
 {
@@ -256,6 +427,7 @@ Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) 
     if(g_levelMap[nextTileY][nextTileX] === "m") {
         return true;  
     }
+    else{return false;}
 };
 
 

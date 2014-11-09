@@ -104,7 +104,7 @@ Pacman.prototype.update = function (du) {
     //check for collision to the maze tiles
     //------------------------------------------------------------------------------
 
-    console.log(this.flag);
+    //console.log(this.flag);
 
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
