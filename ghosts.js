@@ -330,41 +330,6 @@ Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) 
 };
 
 
-//--------------------------Bætt við
-/*Ghost.prototype.checkMazeCollision = function(prevX, prevY, nextX, nextY){
-    //24 is the tile size
-    //var tileX = Math.floor(prevX/24);
-    // var tileY = Math.floor(prevY/24);
-
-
-
-
-
-
-    /*var xFactor = 0;
-    var yFactor = 0;
-    var tempXVel = this.xVel;
-    var tempYVel = this.yVel;
-
-    if(goingright){ tempXVel = 1;}
-    if(goingdown) { tempYVel = 1;}
-
-    if(tempXVel === 1) xFactor = 23;
-    if(tempYVel === 1) yFactor = 23;
-
-    var nextTileX = Math.floor((nextX+xFactor)/24);
-    var nextTileY = Math.floor((nextY+yFactor)/24);
-    //console.log("nextTileX: " + nextTileX  + ", nextTileY" + nextTileY);
-
-   if(g_levelMap[nextTileY][nextTileX] == "m"){
-        //this.x = prevX;
-        //this.y = prevY;
-        this.halt();
-        this.turn();
-    }*/
-
-//};
-
 Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
     var pacman = entityManager._pacman[0];
     var Px = pacman.x;                          // x hnit pacman
@@ -421,13 +386,7 @@ Ghost.prototype.render = function (ctx) {
         goingup = false;
         goingleft = false;
     }
-    /*if (face === "topedge") console.log("topedge");
-    if (face === "bottomedge") console.log("bottomedge");
-    if (face === "leftedge") console.log("leftedge");
-    if (face === "rightedge") console.log("rightedge");*/
-    //console.log(face);
-    //console.log(leftedge);
-    //console.log(rightedge);
+    
     g_sprites[positionsG[c]].drawAt(ctx, this.xR, this.yR);
     d += 0.5;
     if (d % 1 === 0) ++c;    
