@@ -63,6 +63,7 @@ Ghost.prototype.update = function (du) {
     
     var turn = false;
 
+    this.checkPacCollision();
     //check for tile collision
    if(this.xR % 24 === 0 && this.yR % 24 === 0){
         this.checkpos();
@@ -185,8 +186,11 @@ Ghost.prototype.checkpos = function()
                     if(walldown === false){                 //ef veggur er til vinstri og packman er fyrir neðan, þá förum við niður
                         this.goingdown();
                     }
+                    else if(wallright === false){
+                        this.goingright();                     //annars upp
+                    }
                     else{
-                        this.goingup();                     //annars upp
+                        this.goingup();
                     }
                 }else{
                     this.goingup();
@@ -249,6 +253,9 @@ Ghost.prototype.checkpos = function()
             if(wallleft === false){                                         //ef pacman er vinstra megin
                 this.goingleft();
             }
+            else if(walldown === false){
+                this.goingdown();
+            }
             else{
                 this.goingright();
             }
@@ -296,115 +303,7 @@ Ghost.prototype.goingdown = function()
     this.xVel = 0;
     this.yVel = 1;
 }
-//Þetta fall snýr draugnum í þá átt sem er líklegust til að færa hann nær pacman
-/*Ghost.prototype.turn = function()
-{
-    var pacman = entityManager._pacman[0];
-    var Px = pacman.x;                          // x hnit pacman
-    var Py = pacman.y;                          // y hnit pacman
-    //console.log(Py);
-    var xdif = Px - this.xR;                    // Lengdin milli pacman og draugs á x-ás (gæti verið mínus tala)
-    var ydif = Py - this.yR;                    // Lengdin á milli pacman og draugs á y-ás (gæti verið mínus tala)
-    var xdif2 = xdif;
-    var ydif2 = ydif;
-    if(xdif < 0){
-        xdif2 = xdif*-1;                        // algildið af lengdinni á x-ás
 
-    }
-    if(ydif < 0){
-        ydif2 = ydif*-1;                        // algildið af lengdinni á y-ás
-    }
-    //Ef draugurinn er að fara til vinstri þegar hann klessir á vegginn, þá æthugum við fyrst hvort vænlegra er að færa drauginn eftir
-    //x-ás eða y-ás, ef það er vænlegra að færa hann eftir x-ás, þá er bara ein leið í boði, þannig að við vitum að það er bara
-    //vænlegt ef pacman er hægra megin við okkur. 
-    if(goingleft){
-        goingleft = false;                        
-        if((xdif2 > ydif2) && (xdif > 0)){
-            goingright = true;
-            this.xVel = 1;
-            this.yVel = 0;
-        }
-        //Nú vitum við að við viljum ferðast eftir y-ás, athugum hvort pacman sé fyrir ofan eða neðan okkur.
-        else if(ydif < 0){                      //Er hann fyrir ofan?
-            goingup = true;
-            this.xVel = 0;
-            this.yVel = -1;
-        }
-        else{                                      //Þá hlýtur hann að vera fyrir neðan
-            goingdown = true;
-            this.xVel = 0;
-            this.yVel = 1;
-        }
-    }
-    //Ef draugurinn er að fara til hægri þegar hann klessir á vegginn, þá æthugum við fyrst hvort vænlegra er að færa drauginn eftir
-    //x-ás eða y-ás, ef það er vænlegra að færa hann eftir x-ás, þá er bara ein leið í boði, þannig að við vitum að það er bara
-    //vænlegt ef pacman er vinstra megin við okkur. 
-    else if(goingright){
-        goingright = false;
-        if((xdif2 > ydif2) && (xdif < 0)){
-            goingleft = true;
-            this.xVel = -1;
-            this.yVel = 0;
-        }
-        //Hér vitum við að við viljum ferðast eftir y-ás, þannig að við athugum hvort pacman sé fyrir ofan eða neða okkur
-        else if(ydif < 0){
-            goingup = true;
-            this.xVel = 0;
-            this.yVel = -1;
-        }
-        else{
-            goingdown = true;
-            this.xVel = 0;
-            this.yVel = 1; 
-        }
-    }
-    //Ef draugurinn er að fara niður þegar hann klessir á vegg, þá athugum við fyrst hvort vænlegast sé að fara upp, það er að
-    //segja, hvort sniðugast sé að ferðast eftir y-ás og pacman sé fyrir ofan okkur.
-    else if(goingdown){
-        goingdown = false;
-        if((ydif2 > xdif2) && (ydif < 0)){
-            goingup = true;
-            this.xVel = 0;
-            this.yVel = -1;
-        }
-        //Hér vitum við að við viljum ferðast eftir x-ás, þannig að við athugum hvort pacman sé hægra megin eða vinstra megin við okkur
-        else if(xdif > 0){              //Er hann hægra megin við okkur?
-            goingright = true;
-            this.xVel = 1;
-            this.yVel = 0;
-        }
-        else{                           //Þá hlýtur hann að vera vinstra megin við okkur...
-            goingleft = true;
-            this.xVel = -1;
-            this.yVel = 0;
-        }
-    }
-    //Ef draugurinn er að fara upp þegar hann klessir á vegg, þá athugum við fyrst hvort vænlegast sé að fara niðu, það er að
-    //segja, hvort sniðugast sé að ferðast eftir y-ás og pacman sé fyrir neðan okkur.
-    else if(goingup){
-        goingup = false;
-        if((ydif2 > xdif2) && (ydif > 0)){
-            goingdown = true;
-            this.xVel = 0;
-            this.yVel = 1;
-        }
-        //Hér vitum við að við viljum ferðast eftir x-ás, þannig að við athugum hvort pacman sé hægra megin eða vinstra megin við okkur
-        else if(xdif > 0){
-            goingright = true;
-            this.xVel = 1;
-            this.yVel = 0;
-        }
-        else{
-            goingleft = true;
-            this.xVel = -1;
-            this.yVel = 0;
-        }  
-    }
-    
-
-    
-}
-*/
 
 Ghost.prototype.halt = function()
 {
@@ -467,7 +366,16 @@ Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) 
 //};
 
 Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
-
+    var pacman = entityManager._pacman[0];
+    var Px = pacman.x;                          // x hnit pacman
+    var Py = pacman.y;
+    var pacmanWidth = pacman.width;
+    var pacmanMiddleX = Px + pacmanWidth/2;
+    var pacmanMiddleY = Py + pacmanWidth/2;
+  
+    if((this.xR <= pacmanMiddleX && pacmanMiddleX <= this.xR+this.width) && (this.yR <= pacmanMiddleY && pacmanMiddleY<= this.yR+this.height)){
+        main.gameOver();
+    }    
 }
 
 
