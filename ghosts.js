@@ -242,12 +242,15 @@ Ghost.prototype.checkpos = function()
                 }
             }
         }
-        else if(xdif > 0){                                                  //ef pacman er hægra megin
+        else if(xdif >= 0){                                                  //ef pacman er hægra megin
             if(wallright === false){
                 this.goingright();
             }
-            else{
+            else if(wallleft === false){
                 this.goingleft();
+            }
+            else{
+                this.goingdown();
             }
         }else{
             if(wallleft === false){                                         //ef pacman er vinstra megin
