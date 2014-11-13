@@ -16,8 +16,8 @@ function Ghost(descr) {
 
 
 // Initial, inheritable, default values
-Ghost.prototype.xR = 72;                     //R stendur fyrir red, as in red ghost
-Ghost.prototype.yR = 264;                    
+Ghost.prototype.xR = 24*10;                     //R stendur fyrir red, as in red ghost
+Ghost.prototype.yR = 24*9;                    
 
 Ghost.prototype.xG = 72;                     //Green ghost
 Ghost.prototype.yG = 72;
@@ -31,8 +31,10 @@ Ghost.prototype.yO = 264;
 
 Ghost.prototype.width = tile_width;
 Ghost.prototype.height = tile_height;
-Ghost.prototype.cx = 50+tile_width/2;                    //center x
-Ghost.prototype.cy = 50+tile_height/2;                    //center y
+Ghost.prototype.cx = 24*10+tile_width/2;                    //center x
+Ghost.prototype.cy = 24*9+tile_height/2;                    //center y
+
+Ghost.prototype.scaredFlag = false;
 
 Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
@@ -52,6 +54,17 @@ var goingdown = false;
 var turn = false;
 var lastturn = "";
 
+Ghost.prototype.reset = function(){
+    this.xR = 24*10;
+    this.yR = 24*9;
+
+    this.cx = 24*10+tile_width/2;  
+    this.cy = 24*9+tile_height/2; 
+
+    this.xVel = 0;
+    this.yVel = 0;
+}
+
 Ghost.prototype.update = function (du) {
     var prevX = this.xR;
     var prevY = this.yR;
@@ -63,7 +76,9 @@ Ghost.prototype.update = function (du) {
     
     var turn = false;
 
+
     this.checkPacCollision();
+
     //check for tile collision
    if(this.xR % 24 === 0 && this.yR % 24 === 0){
         this.checkpos();
@@ -308,8 +323,7 @@ Ghost.prototype.goingdown = function()
 }
 
 
-Ghost.prototype.halt = function()
-{
+Ghost.prototype.halt = function(){
     this.xVel = 0;
     this.yVel = 0;
 }
@@ -326,14 +340,15 @@ Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) 
     var nextTileX = Math.floor((nextX+xFactor)/tile_width);
     var nextTileY = Math.floor((nextY+yFactor)/tile_width);
 
-    if(g_levelMap[nextTileY][nextTileX] === "m") {
+    if(g_levelMap[nextTileY][nextTileX] === 1) { // maze
         return true;  
     }
-    else{return false;}
+    return false;
 };
 
 
 Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
+
     var pacman = entityManager._pacman[0];
     var Px = pacman.x;                          // x hnit pacman
     var Py = pacman.y;
@@ -342,8 +357,12 @@ Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
     var pacmanMiddleY = Py + pacmanWidth/2;
   
     if((this.xR <= pacmanMiddleX && pacmanMiddleX <= this.xR+this.width) && (this.yR <= pacmanMiddleY && pacmanMiddleY<= this.yR+this.height)){
-        main.gameOver();
+
+        pacman.lives--;
+        pacman.reset();
+        this.reset();
     }    
+
 }
 
 
@@ -360,6 +379,7 @@ Ghost.prototype.render = function (ctx) {
     // going left
     if (this.xVel < 0) {
         positionsG = [55, 56];
+        if(this.scaredFlag) positionsG = [64,65];
         goingleft = true;
         goingright = false;
         goingup = false;
@@ -368,6 +388,7 @@ Ghost.prototype.render = function (ctx) {
     // going right
     else if (this.xVel > 0) {
         positionsG = [21, 22];
+        if(this.scaredFlag) positionsG = [30,31];
         goingright = true;
         goingleft = false;
         goingup = false;
@@ -376,6 +397,7 @@ Ghost.prototype.render = function (ctx) {
     // going up
     else if (this.yVel < 0) {
         positionsG = [4,5];
+        if(this.scaredFlag) positionsG = [13,14];
         goingup = true;
         goingright = false;
         goingleft = false;
@@ -384,11 +406,14 @@ Ghost.prototype.render = function (ctx) {
     // going down
     else if (this.yVel > 0) {
         positionsG = [38,39];
+        if(this.scaredFlag) positionsG = [47,48];
         goingdown = true;
         goingright = false;
         goingup = false;
         goingleft = false;
     }
+
+    
     
     g_sprites[positionsG[c]].drawAt(ctx, this.xR, this.yR);
     d += 0.5;

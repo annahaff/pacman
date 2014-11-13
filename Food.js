@@ -65,6 +65,8 @@ Food.prototype.render = function (ctx) {
     for (var i = 0; i < this.array.length; i++) {
         util.fillCircle(ctx, this.array[i][0], this.array[i][1], 2.5);   
     }
+
+    console.log("typpi");
 };
 
 Food.prototype.fillArray();

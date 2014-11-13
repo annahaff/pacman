@@ -22,10 +22,13 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
     if (type === "food") {
         util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 2.5);
     }
+    //if tile is magicBean
+    if (type === "magicBean") {
+        util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 4, "#00FF00");
+    }
 
-    //if tile is maze, then draw maze
     else if (type === "maze") {
-        util.fillBox(ctx, x, y, tile_width, tile_height, 'blue');
+        util.fillBox(ctx, x+1, y+1, tile_width-1, tile_height-1, 'orange') // for Freydis
     }
 
     else if (type === "ghostbox") {
@@ -53,6 +56,12 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             {
                 this.type = "foodeaten";              //pacman has eaten food
             }
+            if (this.type === "magicBean") 
+            {
+                this.type = "foodeaten";              //pacman has eaten magic food
+                // change ghost behaviour
+                entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
+            }
         }
     }
     //going left/right
@@ -64,6 +73,12 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "food") 
             {
                 this.type = "foodeaten";              //pacman has eaten food
+            }
+            if (this.type === "magicBean") 
+            {
+                this.type = "foodeaten";              //pacman has eaten magic food
+                // change ghost behaviour
+                entityManager._ghost[0].scaredFlag = true;
             }
         }
     }

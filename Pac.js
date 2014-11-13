@@ -19,13 +19,15 @@ Pacman.prototype.GO_UP     = 'W'.charCodeAt(0);
 Pacman.prototype.GO_DOWN   = 'S'.charCodeAt(0);
 
 // Initial, inheritable, default values
-Pacman.prototype.x = 24;                     //top left x
-Pacman.prototype.y = 24;                     //top left y
+Pacman.prototype.x = 24*10;                     //top left x
+Pacman.prototype.y = 24*13;                     //top left y
 
 Pacman.prototype.width = tile_width;
 Pacman.prototype.height = tile_height;
-Pacman.prototype.cx = 24+tile_width/2;                    //center x
-Pacman.prototype.cy = 24+tile_height/2;                   //center y
+Pacman.prototype.cx = 24*10+tile_width/2;                    //center x
+Pacman.prototype.cy = 24*13+tile_height/2;                   //center y
+
+Pacman.prototype.lives = 3;
 
 Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
@@ -63,6 +65,18 @@ Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
     }
 }
 
+Pacman.prototype.reset = function(){
+
+    this.x = 24*10;
+    this.y = 24*13;
+
+    this.cx = 24*10+tile_width/2;
+    this.cy = 24*13+tile_height/2; 
+
+    this.xVel = 0;
+    this.yVel = 0;
+}
+
 Pacman.prototype.update = function (du) {
     var prevX = this.x;
     var prevY = this.y;
@@ -71,6 +85,9 @@ Pacman.prototype.update = function (du) {
     var halfwidth = this.width/2;
     var board = Gameboard.prototype;
 
+    if(this.lives === 0){
+        main.gameOver();
+    }
     
     if (this.x > g_canvas.width) {
         this.x = 0;
@@ -148,12 +165,13 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     var nextTileX = Math.floor((nextX+xFactor)/tile_width);
     var nextTileY = Math.floor((nextY+yFactor)/tile_width);
 
-    if(g_levelMap[nextTileY][nextTileX] === "m" || 
-       g_levelMap[nextTileY][nextTileX] === "g") 
+    if(g_levelMap[nextTileY][nextTileX] === 1 || // maze
+       g_levelMap[nextTileY][nextTileX] === 3)   // ghostbox
     {
-        console.log("halt");
+        //console.log("halt");
         return true;  
     }
+    return false;
 };
 
 
