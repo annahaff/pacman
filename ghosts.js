@@ -52,6 +52,10 @@ Ghost.prototype.goingleft = false;
 Ghost.prototype.goingup = false;
 Ghost.prototype.goingdown = false;
 
+
+Pinky.prototype.targetX = Pacman.prototype.cx;
+Pinky.prototype.targetY = Pacman.prototype.cy;
+
 var turn = false;
 var lastturn = "";
 
@@ -82,9 +86,19 @@ Ghost.prototype.update = function (du) {
 
     //check for tile collision
 
-   if(this.xR % 24 === 0 && this.yR % 24 === 0){
+    if(this.isOnJunction()){
+        console.log("on junction"); 
+        this.setTargetPos();
+       // this.updateDirection();
+
         this.checkpos();
    }
+
+
+   /*
+   if(this.xR % 24 === 0 && this.yR % 24 === 0){
+        this.checkpos();
+   }*/
 
     if (this.xR != (g_canvas.width-this.width) && this.goingright) {
         for (var i = 0; i < rail.length; i++) {         
@@ -149,8 +163,8 @@ Ghost.prototype.checkpos = function()
 {
     //ef draugurinn klessir á vegg ætlum við að stoppa og snúa
     var pacman = entityManager._pacman[0];
-    var Px = pacman.x;                          // x hnit pacman
-    var Py = pacman.y;                          // y hnit pacman
+    var Px = this.targetX;                          // x hnit sem draugur reynir að komast á
+    var Py = this.targetY;                          // y hnit sem draugur reynir að komast á
     //console.log(Py);
     var xdif = Px - this.xR;                    // Lengdin milli pacman og draugs á x-ás (gæti verið mínus tala)
     var ydif = Py - this.yR;                    // Lengdin á milli pacman og draugs á y-ás (gæti verið mínus tala)
@@ -427,6 +441,59 @@ Ghost.prototype.render = function (ctx) {
 };
 
 
+
+Ghost.prototype.isOnJunction = function(){
+    //Ef er að ferðast á x ás, þá athuga hvort reitir á y ás séu ekki maze
+    //annars öfugt
+    //console.log("er á junction?");
+
+    //ef true, þá er að ferðast á x ás
+    if(!Math.abs(this.yVel) > 0){
+       // console.log("er að ferðast á x ás")
+        //var nextTileX = Math.floor((nextX+xFactor)/tile_width);
+        var tileX = Math.floor(this.cx/tile_width);
+        var upTileY = Math.floor((this.cy-(tile_width/2)) / tile_width)-1;
+        var downTileY = Math.floor((this.cy+(tile_width/2)) / tile_width);
+
+        //console.log("tileX: " +  tileX + ", upTileY: " + upTileY + ", downTileY " + downTileY);
+
+        if(g_levelMap[upTileY][tileX] === 2 || 
+       g_levelMap[downTileY][tileX] === 2) {
+            if(this.xR % 24 === 0)
+                return true;
+        }
+    }
+
+    //hér er draugurinn að ferðast eftir y ás
+    else if(!Math.abs(this.xVel) > 0){
+       // console.log("er að ferðast á y ás");
+        var tileY = Math.floor(this.cy/tile_width);
+        var leftTileX = Math.floor((this.cx-24) / tile_width);
+        var rightTileX = Math.floor((this.cx+24) / tile_width);
+
+        //console.log("tileY: " +  tileY + ", leftTileX: " + leftTileX + ", rightTileX " + rightTileX);
+
+        if(g_levelMap[tileY][leftTileX] === 2 || 
+       g_levelMap[tileY][rightTileX] === 2) {
+            if(this.yR % 24 === 0)
+                return true;
+        }
+    }
+
+    return false;
+};
+
+
+Ghost.prototype.setTargetPos = function(){
+    
+    //set target position á packman
+    this.targetX = entityManager._pacman[0].x;
+    this.targetY = entityManager._pacman[0].x;
+
+    //console.log("("+this.targetX+", " + this.targetY+")");
+}
+
+
 /*Pacman.prototype.setPos = function (x, y) {
     this.x = x;
     this.y = y;
@@ -448,7 +515,9 @@ Pacman.prototype.wrapPosition = function () {
 
 
 
-//---------------------------------- Bæta við hinum draugunum---------------------------------
+//---------------------------------- Bæta við hinum draugunum------------------------------------------------------------------------
+//================================================================================================================================
+//Pinky starts here
 //Bæti við hinum draugunum með inheritance, svo það verði auðveldara að bæta við sér
 //hegðun f. hvern draug ef við viljum
 
@@ -464,8 +533,11 @@ function Pinky(descr) {
 }
 
 
-Pinky.prototype.xR = 216+24;                     //R stendur fyrir red, as in red ghost
-Pinky.prototype.yR = 192;
+Pinky.prototype.xR = 216;                     //held inni xR og yR til að geta notað Ghost.prototype.update
+Pinky.prototype.yR = 192+24;
+//Pinky.prototype.xVel = 1;
+Pinky.prototype.targetX = Pacman.prototype.cx;
+Pinky.prototype.targetY = Pacman.prototype.cy;
 
 
 Pinky.prototype.positionsG = [8, 9];   //starting position
@@ -527,5 +599,212 @@ Pinky.prototype.updateRenderDirection = function(){
     this.positionsG[0] += 4;
     this.positionsG[1] += 4;
     //console.log(this.positionsG[0]);
-
 };
+
+
+
+//Set position sem pinky reynir að komast á
+Pinky.prototype.setTargetPos = function(){
+
+
+        //set target position 4 reiti áfram m.v. packman, til að króa af
+    var x = entityManager._pacman[0].cx + 4*24*entityManager._pacman[0].xVel;
+    var y = entityManager._pacman[0].cy + 4*24*entityManager._pacman[0].yVel;
+
+    //ef pacman er nálægt pinky, þá reyna að ná honum beint
+    if(Math.abs(this.cx - x) < 48) x = entityManager._pacman[0].cx;
+    if(Math.abs(this.cy - y ) < 48) y = entityManager._pacman[0].cy;
+
+    //setja ekki target pos útfyrir borðið
+    if(x < 0) x = 0;
+    if(x > g_canvas.width) x = g_canvas.width;
+    if(y < 0) y = 24;
+    if(y > g_canvas.height) y = g_canvas.height - 24;
+
+
+    this.targetX = x;
+    this.targetY = y;
+
+    console.log("("+this.targetX+", " + this.targetY+")");
+    /*
+    //set target position 4 reiti áfram m.v. packman
+    this.targetX = entityManager._pacman[0].cx + 4*24*entityManager._pacman[0].xVel;
+    this.targetY = entityManager._pacman[0].cy + 4*24*entityManager._pacman[0].yVel;
+
+    console.log("("+this.targetX+", " + this.targetY+")");*/
+}
+
+
+
+
+//=================================================================================================
+//============================== Hér byrjar ljósblái ==============================================
+//=================================================================================================
+
+
+Inky.prototype = new Ghost();
+Inky.prototype.constructor = Inky;
+function Inky(descr) {
+    for (var property in descr) {
+        this[property] = descr[property];
+    }
+}
+
+
+Inky.prototype.xR = 216+48;                     //held inni xR og yR til að geta notað Ghost.prototype.update
+Inky.prototype.yR = 192;
+Inky.prototype.xVel = 1;
+Inky.prototype.targetX = Pacman.prototype.cx;
+Inky.prototype.targetY = Pacman.prototype.cy;
+
+
+Inky.prototype.positionsG = [8, 9];   //starting position
+
+
+//copy paste frá ghost.render, en tek hluta út fyrir í annað fall (updateRenderDirection)
+Inky.prototype.render = function (ctx) {
+    leftedge = this.xR + this.height/2;
+    rightedge = leftedge + this.width/2;
+    topedge = this.yR + this.width/2;
+    bottomedge = topedge + this.height/2;
+
+    this.updateRenderDirection();
+    
+    g_sprites[this.positionsG[c]].drawAt(ctx, this.xR, this.yR);
+    d += 0.5;
+    if (d % 1 === 0) ++c;    
+    if (c === 1) c = 0;
+};
+
+
+
+Inky.prototype.updateRenderDirection = function(){
+
+    // going left
+    if (this.xVel < 0) {
+        this.positionsG = [55, 56];
+        if(this.scaredFlag) this.positionsG = [64,65];
+        this.goingleft = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going right
+    else if (this.xVel > 0) {
+        this.positionsG = [21, 22];
+        if(this.scaredFlag) this.positionsG = [30,31];
+        this.goingright = true;
+        this.goingleft = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going up
+    else if (this.yVel < 0) {
+        this.positionsG = [4,5];
+        if(this.scaredFlag) this.positionsG = [13,14];
+        this.goingup = true;
+        this.goingright = false;
+        this.goingleft = false;
+        this.goingdown = false;
+    }
+    // going down
+    else if (this.yVel > 0) {
+        this.positionsG = [38,39];
+        if(this.scaredFlag) this.positionsG = [47,48];
+        this.goingdown = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingleft = false;
+    }
+    this.positionsG[0] += 2;
+    this.positionsG[1] += 2;
+    //console.log(this.positionsG[0]);
+};
+
+
+
+//=================================================================================================
+//============================== Hér byrjar appelsínuguli ==============================================
+//=================================================================================================
+
+
+
+Clyde.prototype = new Ghost();
+Clyde.prototype.constructor = Clyde;
+function Clyde(descr) {
+    for (var property in descr) {
+        this[property] = descr[property];
+    }
+}
+
+
+Clyde.prototype.xR = 216+48;                     //held inni xR og yR til að geta notað Ghost.prototype.update
+Clyde.prototype.yR = 192+24;
+Clyde.prototype.xVel = 1;
+Clyde.prototype.targetX = Pacman.prototype.cx;
+Clyde.prototype.targetY = Pacman.prototype.cy;
+
+
+Clyde.prototype.positionsG = [8, 9];   //starting position
+
+
+//copy paste frá ghost.render, en tek hluta út fyrir í annað fall (updateRenderDirection)
+Clyde.prototype.render = function (ctx) {
+    leftedge = this.xR + this.height/2;
+    rightedge = leftedge + this.width/2;
+    topedge = this.yR + this.width/2;
+    bottomedge = topedge + this.height/2;
+
+    this.updateRenderDirection();
+    
+    g_sprites[this.positionsG[c]].drawAt(ctx, this.xR, this.yR);
+    d += 0.5;
+    if (d % 1 === 0) ++c;    
+    if (c === 1) c = 0;
+};
+
+
+
+Clyde.prototype.updateRenderDirection = function(){
+
+    // going left
+    if (this.xVel < 0) {
+        this.positionsG = [55, 56];
+        if(this.scaredFlag) this.positionsG = [64,65];
+        this.goingleft = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going right
+    else if (this.xVel > 0) {
+        this.positionsG = [21, 22];
+        if(this.scaredFlag) this.positionsG = [30,31];
+        this.goingright = true;
+        this.goingleft = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going up
+    else if (this.yVel < 0) {
+        this.positionsG = [4,5];
+        if(this.scaredFlag) this.positionsG = [13,14];
+        this.goingup = true;
+        this.goingright = false;
+        this.goingleft = false;
+        this.goingdown = false;
+    }
+    // going down
+    else if (this.yVel > 0) {
+        this.positionsG = [38,39];
+        if(this.scaredFlag) this.positionsG = [47,48];
+        this.goingdown = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingleft = false;
+    }
+    this.positionsG[0] += 6;
+    this.positionsG[1] += 6;
+    //console.log(this.positionsG[0]);
+};
+
