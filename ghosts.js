@@ -46,10 +46,10 @@ var leftedge;
 var rightedge;
 var topedge;
 var bottomedge;
-var goingright = false;
-var goingleft = false;
-var goingup = false;
-var goingdown = false;
+Ghost.prototype.goingright = false;
+Ghost.prototype.goingleft = false;
+Ghost.prototype.goingup = false;
+Ghost.prototype.goingdown = false;
 
 var turn = false;
 var lastturn = "";
@@ -85,7 +85,7 @@ Ghost.prototype.update = function (du) {
         this.checkpos();
    }
 
-    if (this.xR != (g_canvas.width-this.width) && goingright) {
+    if (this.xR != (g_canvas.width-this.width) && this.goingright) {
         for (var i = 0; i < rail.length; i++) {         
                 if (this.cy === rail[i][1]) {
                     this.xVel = 1;
@@ -95,7 +95,7 @@ Ghost.prototype.update = function (du) {
         }
     }
 
-    else if (this.xR != 0 && goingleft) {
+    else if (this.xR != 0 && this.goingleft) {
         for (var i = 0; i < rail.length; i++) {
             if (this.cy === rail[i][1]) {
                 this.xVel = -1;
@@ -104,7 +104,7 @@ Ghost.prototype.update = function (du) {
         }
     }
 
-    else if (this.yR != 0 && goingup) {
+    else if (this.yR != 0 && this.goingup) {
         for (var i = 0; i < rail.length; i++) {   
             if (this.cx === rail[i][0]) {
                 this.xVel = 0;
@@ -114,7 +114,7 @@ Ghost.prototype.update = function (du) {
 
         } 
     }
-    else if (this.yR != (g_canvas.height-this.height) && goingdown) {
+    else if (this.yR != (g_canvas.height-this.height) && this.goingdown) {
         for (var i = 0; i < rail.length; i++) {
             if (this.cx === rail[i][0]) {
                 this.xVel = 0;
@@ -182,143 +182,143 @@ Ghost.prototype.checkpos = function()
         if(xdif2 >= ydif2){                                  //ef það er betra að ferðast eftir x-ás, þurfum við að athuga til hægri og vinstri
             if(xdif > 0){                                   //ef pacman er hægra megin og það er ekki veggur til hægri, þá förum til hægri
                 if(wallright === false){
-                    this.goingright();
+                    this.goingRight();
                 }
                 else if(wallright === true && ydif > 0){   //ef pacman er til hægri og það er veggur til hægri, þá ath við hvort pacman sé fyrir ofan eða neðan
                     if(walldown === false){
-                        this.goingdown();                   //ef hann er fyrir neðan og það er ekki veggur fyrir neða, þá förum við niður
+                        this.goingDown();                   //ef hann er fyrir neðan og það er ekki veggur fyrir neða, þá förum við niður
                     }
                     else{
-                        this.goingup();                     //annars upp
+                        this.goingUp();                     //annars upp
                     }
                 }else{
-                    this.goingup();
+                    this.goingUp();
                 }
             }else if(xdif < 0){                             //ef pacman er vinstramegin förum við til vinstri nema þar sé veggur
                 if(wallleft === false){
-                    this.goingleft();
+                    this.goingLeft();
                 }
                 else if(wallleft === true && ydif > 0){
                     if(walldown === false){                 //ef veggur er til vinstri og packman er fyrir neðan, þá förum við niður
-                        this.goingdown();
+                        this.goingDown();
                     }
                     else if(wallright === false){
-                        this.goingright();                     //annars upp
+                        this.goingRight();                     //annars upp
                     }
                     else{
-                        this.goingup();
+                        this.goingUp();
                     }
                 }else{
-                    this.goingup();
+                    this.goingUp();
                 }
             }
         }
         else if(ydif >= 0){                                 //Ef það borgar sig að fara um y-ás, þá athugum við hvort pacman sé fyrir neðan
             if(walldown === false){                         //ef hann er fyrir neðan og það er ekki veggur fyrir neðan, förum við niður
-                this.goingdown();
+                this.goingDown();
             }
             else if(walldown === true && xdif > 0){         //ef pacman er fyrir neðan en það er veggur fyrir neðan draug og pacman er hægra megin, förum við til hægri
                 if(wallright === false){
-                    this.goingright();
+                    this.goingRight();
                 }
                 else{
-                    this.goingup();                         //annars upp
+                    this.goingUp();                         //annars upp
                 }
             }else if(walldown === true && xdif < 0){           // ef pacman er vinstra megin, þá förum við til vinstri, nema ef veggur er, þá upp
                 if(wallleft === false){
-                    this.goingleft();
+                    this.goingLeft();
                 }
                 else{
-                    this.goingup();
+                    this.goingUp();
                 }
             }
         }
         else if(ydif < 0){
-            this.goingup();
+            this.goingUp();
         }
     }else if(wallup === true){                                                  // ef það hins vegar er veggur fyrir ofan
         if(ydif2 >= xdif2 && ydif > 0){                                       //ef pacman er fyrir neðan og við viljum ferðast eftir y-ás
             if(walldown === false){
-                this.goingdown();
+                this.goingDown();
             }
             else if(walldown === true && xdif > 0){                            //ef pacman er fyrir neðan en það er veggur fyrir neðan
                 if(wallright === false){
-                    this.goingright();
+                    this.goingRight();
                 }
                 else{
-                    this.goingleft();
+                    this.goingLeft();
                 }
             }
             else if(walldown === true && xdif < 0){
                 if(wallleft === false){
-                    this.goingleft();
+                    this.goingLeft();
                 }
                 else{
-                    this.goingright();
+                    this.goingRight();
                 }
             }
         }
         else if(xdif >= 0){                                                  //ef pacman er hægra megin
             if(wallright === false){
-                this.goingright();
+                this.goingRight();
             }
             else if(wallleft === false){
-                this.goingleft();
+                this.goingLeft();
             }
             else{
-                this.goingdown();
+                this.goingDown();
             }
         }else{
             if(wallleft === false){                                         //ef pacman er vinstra megin
-                this.goingleft();
+                this.goingLeft();
             }
             else if(walldown === false){
-                this.goingdown();
+                this.goingDown();
             }
             else{
-                this.goingright();
+                this.goingRight();
             }
         }                                    
     }
 }
 
 
-Ghost.prototype.goingright = function()
+Ghost.prototype.goingRight = function()
 {
-    goingright = true;
-    goingleft = false;
-    goingup = false;
-    goingdown = false;
+    this.goingright = true;
+    this.goingleft = false;
+    this.goingup = false;
+    this.goingdown = false;
     this.xVel = 1;
     this.yVel = 0;
 }
 
-Ghost.prototype.goingleft = function()
+Ghost.prototype.goingLeft = function()
 {
-    goingright = false;
-    goingleft = true;
-    goingup = false;
-    goingdown = false;
+    this.goingright = false;
+    this.goingleft = true;
+    this.goingup = false;
+    this.goingdown = false;
     this.xVel = -1;
     this.yVel = 0;
 }
 
-Ghost.prototype.goingup = function()
+Ghost.prototype.goingUp = function()
 {
-    goingright = false;
-    goingleft = false;
-    goingup = true;
-    goingdown = false;
+    this.goingright = false;
+    this.goingleft = false;
+    this.goingup = true;
+    this.goingdown = false;
     this.xVel = 0;
     this.yVel = -1;
 }
 
-Ghost.prototype.goingdown = function()
+Ghost.prototype.goingDown = function()
 {
-    goingright = false;
-    goingleft = false;
-    goingup = false;
-    goingdown = true;
+    this.goingright = false;
+    this.goingleft = false;
+    this.goingup = false;
+    this.goingdown = true;
     this.xVel = 0;
     this.yVel = 1;
 }
@@ -369,7 +369,7 @@ Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
 
 var c = 0;
 var d = 0;
-var positionsG = [4, 4];   //starting position
+Ghost.prototype.positionsG = [4, 4];   //starting position
 
 Ghost.prototype.render = function (ctx) {
     leftedge = this.xR + this.height/2;
@@ -379,44 +379,44 @@ Ghost.prototype.render = function (ctx) {
 
     // going left
     if (this.xVel < 0) {
-        positionsG = [55, 56];
-        if(this.scaredFlag) positionsG = [64,65];
-        goingleft = true;
-        goingright = false;
-        goingup = false;
-        goingdown = false;
+        this.positionsG = [55, 56];
+        if(this.scaredFlag) this.positionsG = [64,65];
+        this.goingleft = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingdown = false;
     }
     // going right
     else if (this.xVel > 0) {
-        positionsG = [21, 22];
-        if(this.scaredFlag) positionsG = [30,31];
-        goingright = true;
-        goingleft = false;
-        goingup = false;
-        goingdown = false;
+        this.positionsG = [21, 22];
+        if(this.scaredFlag) this.positionsG = [30,31];
+        this.goingright = true;
+        this.goingleft = false;
+        this.goingup = false;
+        this.goingdown = false;
     }
     // going up
     else if (this.yVel < 0) {
-        positionsG = [4,5];
-        if(this.scaredFlag) positionsG = [13,14];
-        goingup = true;
-        goingright = false;
-        goingleft = false;
-        goingdown = false;
+        this.positionsG = [4,5];
+        if(this.scaredFlag) this.positionsG = [13,14];
+        this.goingup = true;
+        this.goingright = false;
+        this.goingleft = false;
+        this.goingdown = false;
     }
     // going down
     else if (this.yVel > 0) {
-        positionsG = [38,39];
-        if(this.scaredFlag) positionsG = [47,48];
-        goingdown = true;
-        goingright = false;
-        goingup = false;
-        goingleft = false;
+        this.positionsG = [38,39];
+        if(this.scaredFlag) this.positionsG = [47,48];
+        this.goingdown = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingleft = false;
     }
 
     
     
-    g_sprites[positionsG[c]].drawAt(ctx, this.xR, this.yR);
+    g_sprites[this.positionsG[c]].drawAt(ctx, this.xR, this.yR);
     d += 0.5;
     if (d % 1 === 0) ++c;    
     if (c === 1) c = 0;
@@ -442,3 +442,86 @@ Pacman.prototype.wrapPosition = function () {
     this.y = util.wrapRange(this.y, 0, g_canvas.height);
 };*/
 
+
+
+//---------------------------------- Bæta við hinum draugunum---------------------------------
+//Bæti við hinum draugunum með inheritance, svo það verði auðveldara að bæta við sér
+//hegðun f. hvern draug ef við viljum
+
+
+
+
+Pinky.prototype = new Ghost();
+Pinky.prototype.constructor = Pinky;
+function Pinky(descr) {
+    for (var property in descr) {
+        this[property] = descr[property];
+    }
+}
+
+
+Pinky.prototype.xR = 216+24;                     //R stendur fyrir red, as in red ghost
+Pinky.prototype.yR = 192;
+
+
+Pinky.prototype.positionsG = [8, 9];   //starting position
+
+Pinky.prototype.render = function (ctx) {
+    leftedge = this.xR + this.height/2;
+    rightedge = leftedge + this.width/2;
+    topedge = this.yR + this.width/2;
+    bottomedge = topedge + this.height/2;
+
+    this.updateRenderDirection();
+    
+    g_sprites[this.positionsG[c]].drawAt(ctx, this.xR, this.yR);
+    d += 0.5;
+    if (d % 1 === 0) ++c;    
+    if (c === 1) c = 0;
+};
+
+
+
+Pinky.prototype.updateRenderDirection = function(){
+
+    // going left
+    if (this.xVel < 0) {
+        this.positionsG = [55, 56];
+        if(this.scaredFlag) this.positionsG = [64,65];
+        this.goingleft = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going right
+    else if (this.xVel > 0) {
+        this.positionsG = [21, 22];
+        if(this.scaredFlag) this.positionsG = [30,31];
+        this.goingright = true;
+        this.goingleft = false;
+        this.goingup = false;
+        this.goingdown = false;
+    }
+    // going up
+    else if (this.yVel < 0) {
+        this.positionsG = [4,5];
+        if(this.scaredFlag) this.positionsG = [13,14];
+        this.goingup = true;
+        this.goingright = false;
+        this.goingleft = false;
+        this.goingdown = false;
+    }
+    // going down
+    else if (this.yVel > 0) {
+        this.positionsG = [38,39];
+        if(this.scaredFlag) this.positionsG = [47,48];
+        this.goingdown = true;
+        this.goingright = false;
+        this.goingup = false;
+        this.goingleft = false;
+    }
+    this.positionsG[0] += 4;
+    this.positionsG[1] += 4;
+    //console.log(this.positionsG[0]);
+
+};

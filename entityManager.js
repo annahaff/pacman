@@ -32,6 +32,7 @@ var entityManager = {
 
     generateGhost : function(descr) {
         this._ghost.push(new Ghost(descr));
+        this._ghost.push(new Pinky(descr));
     },
 
     init: function() {
