@@ -379,6 +379,7 @@ Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
         this.reset();
         if(pacman.lives === 0){
             main.gameOver();
+            pacman.lives = 3;
         }
     }    
 
