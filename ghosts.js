@@ -488,7 +488,7 @@ Ghost.prototype.setTargetPos = function(){
     
     //set target position á packman
     this.targetX = entityManager._pacman[0].x;
-    this.targetY = entityManager._pacman[0].x;
+    this.targetY = entityManager._pacman[0].y;
 
     //console.log("("+this.targetX+", " + this.targetY+")");
 }
