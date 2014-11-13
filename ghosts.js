@@ -16,17 +16,17 @@ function Ghost(descr) {
 
 
 // Initial, inheritable, default values
-Ghost.prototype.xR = 72;                     //R stendur fyrir red, as in red ghost
-Ghost.prototype.yR = 264;                    
+Ghost.prototype.xR = 216;                     //R stendur fyrir red, as in red ghost
+Ghost.prototype.yR = 192;                    
 
-Ghost.prototype.xG = 72;                     //Green ghost
-Ghost.prototype.yG = 72;
+Ghost.prototype.xG = 240;                     //Green ghost
+Ghost.prototype.yG = 192;
 
-Ghost.prototype.xP = 192;                     //Pink ghost
-Ghost.prototype.yP = 72;
+Ghost.prototype.xP = 216;                     //Pink ghost
+Ghost.prototype.yP = 216;
 
-Ghost.prototype.xO = 192;                     //Orange ghost
-Ghost.prototype.yO = 264;
+Ghost.prototype.xO = 240;                     //Orange ghost
+Ghost.prototype.yO = 216;
 
 
 Ghost.prototype.width = tile_width;
@@ -44,7 +44,7 @@ var leftedge;
 var rightedge;
 var topedge;
 var bottomedge;
-var goingright = true;
+var goingright = false;
 var goingleft = false;
 var goingup = false;
 var goingdown = false;
@@ -65,6 +65,7 @@ Ghost.prototype.update = function (du) {
 
     this.checkPacCollision();
     //check for tile collision
+
    if(this.xR % 24 === 0 && this.yR % 24 === 0){
         this.checkpos();
    }
