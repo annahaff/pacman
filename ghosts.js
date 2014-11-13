@@ -40,6 +40,7 @@ Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
 Ghost.prototype.mazecollision = false;
 
+
 var ghost = Ghost.prototype;
 
 var leftedge;
@@ -362,6 +363,9 @@ Ghost.prototype.checkPacCollision = function(prevX, prevY, nextX, nextY){
         pacman.lives--;
         pacman.reset();
         this.reset();
+        if(pacman.lives === 0){
+            main.gameOver();
+        }
     }    
 
 }
