@@ -53,7 +53,21 @@ var entityManager = {
         var targets = [[1, 1], [1, 17], [19, 17], [19, 1]];
         var initialPos = [[10, 9], [9, 8], [10, 8], [9, 9]];
         
-        for(var i = 0; i < colors.length; i++)
+
+        this._ghost.push(new Ghost({
+            x : pos[0][0],           
+            y : pos[0][1],     
+            cx : pos[0][0] + tile_width/2,
+            cy : pos[0][1] + tile_width/2,      
+            color : colors[0],
+            targetX : targets[0][0],
+            targetY : targets[0][1], 
+            tilePosX : initialPos[0][0],
+            tilePosY : initialPos[0][1],
+            mode : 'scatter'
+        }));
+
+        for(var i = 1; i < colors.length; i++)
         {
             this._ghost.push(new Ghost({
                 x : pos[i][0],           
@@ -68,6 +82,7 @@ var entityManager = {
                 mode : 'chase'
             }));
         }
+        
     },
 
     update: function(du) {
@@ -87,7 +102,6 @@ var entityManager = {
             var aCategory = this._categories[i];
             for (var j = 0; j < aCategory.length; ++j) {
                 aCategory[j].render(ctx);
-                //console.log("render");
             }
         }
     }

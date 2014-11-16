@@ -18,7 +18,7 @@ function Ghost(descr) {
 Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
 Ghost.prototype.direction;
-Ghost.prototype.lifeSpan = 10 * SECS_TO_NOMINALS;
+Ghost.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
 
 Ghost.prototype.turn = function (direction, xy, rail, xVel, yVel) {
     for (var i = 0; i < rail.length; i++) {
@@ -132,27 +132,55 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 }
 
-Ghost.prototype.switchModes = function (oldMode) {
-    if (this.mode === 'chase') {
-        this.mode = 'scatter';
-        console.log("switch to scatter");
-        return;
+/*Ghost.prototype.switchModes() {
+    //ok 3 draugar í chase
+    //og 1 draugur í scatter
+    var ghostArray = entityManager._ghost;
+    for (var i = 0; i < 3; i++)
+    {
+        if (ghostArray[i].mode === 'scatter') {
+            ghostArray[i].mode = 'chase';
+            ghostArray[i+1].mode = 'scatter';
+            return;
+        }
     }
-    else if (this.mode === 'scatter') {
-        this.mode = 'chase';
-        console.log("switch to chase");
-        return;
-    }
+    console.log(ghostArray[0].mode + " " + ghostArray[1].mode + " " + 
+        ghostArray[2].mode + " " + ghostArray[3].mode);
+}*/
+
+/*Ghost.prototype.resetModes = function () {
+    this.mode = 'scatter';
+    console.log(this.mode);
+}*/
+
+Ghost.prototype.switchModes = function() {
+    //ok 3 draugar í chase
+    //og 1 draugur í scatter
+    var ghostArray = entityManager._ghost;
+    var random = ghostArray[Math.floor(Math.random() * ghostArray.length)];
+    //ok vel random draug úr ghostArray
+    //ef hann hefur mode = scatter þá switchum við því í chase
+    //ef hann hefur mode = chase
+    if (random.mode === 'chase') random.mode = 'scatter';
+    else if (random.mode === 'scatter') random.mode = 'chase';
 }
 
 Ghost.prototype.update = function (du) {
     //timer resets to 30 seconds when it gets to 0
     if (this.lifeSpan < 0)
     {
-        this.switchModes(this.mode);
-        this.lifeSpan = 10 * SECS_TO_NOMINALS;
+        this.switchModes();
+        this.lifeSpan = 15 * SECS_TO_NOMINALS;
     }
+
+    var ghostArray = entityManager._ghost;
+    console.log(ghostArray[0].mode + ": " + ghostArray[0].color + 
+        ", " + ghostArray[1].mode + ": " + ghostArray[1].color + ", " + 
+        ghostArray[2].mode + ": " + ghostArray[2].color + 
+        ", " + ghostArray[3].mode + ": " +ghostArray[3].color);
+    
     this.lifeSpan -= du;
+
     var prevX = this.x;
     var prevY = this.y;
     var nextX = prevX + this.xVel;
@@ -168,10 +196,10 @@ Ghost.prototype.update = function (du) {
         this.x = g_canvas.width;
     }
     
-    //if (this.lifeSpan >= 1200) {
+    //if (lifeSpan >= 1200) {
     //chase mode
     if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
-        this.mode = 'chase';
+        //this.mode = 'chase';
         
         this.checkPacmanCollision(pacman);
 
@@ -182,12 +210,12 @@ Ghost.prototype.update = function (du) {
         }
     }
     //scatter mode
-    //else if (this.lifeSpan >= 600) {
+    //else if (lifeSpan >= 600) {
     else if (this.mode === 'scatter') {
-        this.mode = 'scatter';
+        //this.mode = 'scatter';
 
         var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [this.targetX, this.targetY]);
+        var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
         if (shortestDist != undefined) {
             this.chase(shortestDist, this.tilePosX, this.tilePosY);
         }
@@ -197,9 +225,9 @@ Ghost.prototype.update = function (du) {
         this.scatter(this.targetX, this.targetY, this.tilePosX, this.tilePosY);*/
     }
     //frightened mode
-    //else if (this.lifeSpan >= 1) {
+    //else if (lifeSpan >= 1) {
     else if (this.mode === 'frightened') {
-        this.mode = 'frightened';
+        //this.mode = 'frightened';
         var neighbors = this.checkNeighbors();
         this.frightened(neighbors, this.tilePosX, this.tilePosY);
     }
@@ -305,6 +333,7 @@ Ghost.prototype.setPos = function (x, y) {
     this.x = x;
     this.y = y;
 };
+
 Ghost.prototype.reset = function () {
     for (var i = 0; i < entityManager._ghost.length; i++)
     {
