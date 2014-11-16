@@ -29,7 +29,7 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
     }
 
     else if (type === "maze") {
-        util.fillBox(ctx, x+2, y+2, tile_width-2, tile_height-2, 'orange') // for Freydis
+        util.fillBox(ctx, x+2, y+2, tile_width-2, tile_height-2, 'lawngreen') // for Freydis
     }
 
     else if (type === "ghostbox") {

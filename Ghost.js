@@ -18,7 +18,7 @@ function Ghost(descr) {
 Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
 Ghost.prototype.direction;
-Ghost.prototype.lifeSpan = 30 * SECS_TO_NOMINALS;
+Ghost.prototype.lifeSpan = 10 * SECS_TO_NOMINALS;
 
 Ghost.prototype.turn = function (direction, xy, rail, xVel, yVel) {
     for (var i = 0; i < rail.length; i++) {
@@ -96,7 +96,9 @@ Ghost.prototype.checkNeighbors = function () {
     return legal_neighbors;
 }
 
-// chase mode
+// if ghost is in chase mode everything works
+// in scatter mode, each ghost has a specific targetX and targetY tile
+// they all seem to be heading for the same target now, needs to be fixed :P
 Ghost.prototype.chase = function (shortestDist, tilePosX, tilePosY) {       
     if (shortestDist[0] < tilePosX) {
         this.turn("left", this.cy, rail, -1, 0);
@@ -111,54 +113,6 @@ Ghost.prototype.chase = function (shortestDist, tilePosX, tilePosY) {
         this.turn("down", this.cx, rail, 0, 1);
     }            
 }
-
-// scatter mode, each ghost has a specific targetX and targetY tile
-// they all seem to be heading for the same target now, needs to be fixed :P
-Ghost.prototype.scatter = function (targetX, targetY, tilePosX, tilePosY) {    
-    var neighbors = this.checkNeighbors();
-    var shortestDist = this.shortestDistance(neighbors, [targetX, targetY]);
-    console.log(this.color + " " + this.targetX + " " + this.targetY + " " + shortestDist);
-
-    if (shortestDist[0] < this.tilePosX) {
-        this.turn("left", this.cy, rail, -1, 0);
-    }
-    if (shortestDist[0] > this.tilePosX) {
-        this.turn("right", this.cy, rail, 1, 0);
-    }
-    if (shortestDist[1] < this.tilePosY) {
-        this.turn("up", this.cx, rail, 0, -1);
-    }
-    if (shortestDist[1] > this.tilePosY) {
-        this.turn("down", this.cx, rail, 0, 1);
-    }
-    /*if (this.targetX < this.tilePosX) {
-        this.turn("left", this.cy, rail, -1, 0);
-    }
-    if (this.targetX > this.tilePosX) {
-        this.turn("right", this.cy, rail, 1, 0);
-    }
-    if (this.targetY < this.tilePosY) {
-        this.turn("up", this.cx, rail, 0, -1);
-    }
-    if (this.targetY > this.tilePosY) {
-        this.turn("down", this.cx, rail, 0, 1);
-    }    */
-
-    /*if (targetX < tilePosX) {
-        this.turn("left", this.cy, rail, -1, 0);
-    }
-    if (targetX > tilePosX) {
-        this.turn("right", this.cy, rail, 1, 0);
-    }
-    if (targetY < tilePosY) {
-        this.turn("up", this.cx, rail, 0, -1);
-    }
-    if (targetY > tilePosY) {
-        this.turn("down", this.cx, rail, 0, 1);
-    }  */
-    //console.log(this.color + " " + targetX + " " + targetY);
-}
-
 
 // frightened mode, ghost changes color, decreases speed and goes into directions
 // based on pesudorandom choices
@@ -178,11 +132,25 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 }
 
+Ghost.prototype.switchModes = function (oldMode) {
+    if (this.mode === 'chase') {
+        this.mode = 'scatter';
+        console.log("switch to scatter");
+        return;
+    }
+    else if (this.mode === 'scatter') {
+        this.mode = 'chase';
+        console.log("switch to chase");
+        return;
+    }
+}
+
 Ghost.prototype.update = function (du) {
     //timer resets to 30 seconds when it gets to 0
     if (this.lifeSpan < 0)
     {
-        this.lifeSpan = 30 * SECS_TO_NOMINALS;
+        this.switchModes(this.mode);
+        this.lifeSpan = 10 * SECS_TO_NOMINALS;
     }
     this.lifeSpan -= du;
     var prevX = this.x;
@@ -204,14 +172,11 @@ Ghost.prototype.update = function (du) {
     //chase mode
     if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
         this.mode = 'chase';
-
-        console.log('chase');
         
         this.checkPacmanCollision(pacman);
 
         var neighbors = this.checkNeighbors();
         var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
-
         if (shortestDist != undefined) {
             this.chase(shortestDist, this.tilePosX, this.tilePosY);          
         }
@@ -220,9 +185,16 @@ Ghost.prototype.update = function (du) {
     //else if (this.lifeSpan >= 600) {
     else if (this.mode === 'scatter') {
         this.mode = 'scatter';
+
         var neighbors = this.checkNeighbors();
         var shortestDist = this.shortestDistance(neighbors, [this.targetX, this.targetY]);
-        this.scatter(this.targetX, this.targetY, this.tilePosX, this.tilePosY);
+        if (shortestDist != undefined) {
+            this.chase(shortestDist, this.tilePosX, this.tilePosY);
+        }
+        /*this.mode = 'scatter';
+        var neighbors = this.checkNeighbors();
+        var shortestDist = this.shortestDistance(neighbors, [this.targetX, this.targetY]);
+        this.scatter(this.targetX, this.targetY, this.tilePosX, this.tilePosY);*/
     }
     //frightened mode
     //else if (this.lifeSpan >= 1) {
