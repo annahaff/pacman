@@ -7,10 +7,11 @@
 /* jshint browser: true, devel: true, globalstrict: true */
 
 //Tile object
-function Tile(x, y, type) {
+function Tile(x, y, type, pos) {
     this.x = x;
     this.y = y;
     this.type = type;
+    this.pos = pos;
 }
 
 
@@ -28,7 +29,7 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
     }
 
     else if (type === "maze") {
-        util.fillBox(ctx, x+1, y+1, tile_width-1, tile_height-1, 'orange') // for Freydis
+        util.fillBox(ctx, x+2, y+2, tile_width-2, tile_height-2, 'orange') // for Freydis
     }
 
     else if (type === "ghostbox") {
@@ -59,7 +60,6 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
-                // change ghost behaviour
                 entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
             }
         }
@@ -77,7 +77,6 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
-                // change ghost behaviour
                 entityManager._ghost[0].scaredFlag = true;
             }
         }

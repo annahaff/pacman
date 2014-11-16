@@ -15,7 +15,7 @@ function Gameboard(descr) {
 
 // Initial, inheritable, default values
 Gameboard.prototype.tileArray = [];
-var g_levelMap =[                                 // 7   8
+var g_levelMap = [                
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
                 [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1], //2
                 [1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1], //3
@@ -44,24 +44,40 @@ Gameboard.prototype.fillBoard = function() {
        // console.log("i : " + i);
        // console.log("g_levelMap.length[i] : " + g_levelMap[0].length);
         for(var j = 0; j < g_levelMap[i].length; j++){
-            //console.log("i = " + i + ", j = " + j);
-            //console.log(g_levelMap[i][j]);
-            //console.log(g_levelMap[i]);
             var tileSize = 24; //width and height is the same
             var xPos = j*24;
             var yPos = i*24;
-
+            var mapPos = [j, i];
             //console.log("x: " + xPos + ", y: " + yPos);
-            
+
             if(g_levelMap[i][j] === 1) {var type = "maze"};         // m
             if(g_levelMap[i][j] === 2) {var type = "food"};         // f
             if(g_levelMap[i][j] === 3) {var type = "ghostbox"};     // g
             if(g_levelMap[i][j] === 4) {var type = "magicBean"};    // b
-            this.tileArray.push(new Tile(xPos, yPos, type));
-            
+
+            this.tileArray.push(new Tile(xPos, yPos, type, mapPos));        
         }
     }
 };
+
+
+Gameboard.prototype.findPos = function (x, y) {
+    for (var j = 0; j < this.tileArray.length; j++) {
+        if (this.tileArray[j].x === x && this.tileArray[j].y === y) {
+            return this.tileArray[j].pos;
+        }
+    }
+};
+
+
+
+Gameboard.prototype.findPos2 = function (xPos, yPos) {
+    for (var j = 0; j < this.tileArray.length; j++) {
+        if (this.tileArray[j].pos[0] === xPos && this.tileArray[j].pos[1] === yPos) {
+            return this.tileArray[j];
+        }
+    }
+}
 
 Gameboard.prototype.update = function (du) {
 

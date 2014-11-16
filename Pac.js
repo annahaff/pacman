@@ -11,26 +11,31 @@ function Pacman(descr) {
     for (var property in descr) {
         this[property] = descr[property];
     }
+    this.reset_x = this.x;
+    this.reset_y = this.y;
 }
+
+var pacman = Pacman.prototype;
 
 Pacman.prototype.GO_LEFT   = 'A'.charCodeAt(0);
 Pacman.prototype.GO_RIGHT  = 'D'.charCodeAt(0);
 Pacman.prototype.GO_UP     = 'W'.charCodeAt(0);
 Pacman.prototype.GO_DOWN   = 'S'.charCodeAt(0);
 
+
 // Initial, inheritable, default values
-Pacman.prototype.x = 24*10;                     //top left x
-Pacman.prototype.y = 24*13;                     //top left y
-
-Pacman.prototype.width = tile_width;
-Pacman.prototype.height = tile_height;
-Pacman.prototype.cx = 24*10+tile_width/2;                    //center x
-Pacman.prototype.cy = 24*13+tile_height/2;                   //center y
-
-Pacman.prototype.lives = 3;
 
 Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
+Pacman.prototype.tilePosX = 0;
+Pacman.prototype.tilePosY = 0; 
+
+Pacman.prototype.reset = function () {
+    this.setPos(this.reset_x, this.reset_y);
+    //this.halt();
+};
+
+
 Pacman.prototype.flag;
 var rail = [];
 
@@ -43,6 +48,7 @@ for (var i = 12; i < g_canvas.width; i += 24) {
 Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
 {
     this.flag = flag;
+    //console.log(rail[1]);
     for (var i = 0; i < rail.length; i++)
     {
         if (xy === this.cy) var r = rail[i][1];
@@ -65,18 +71,6 @@ Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
     }
 }
 
-Pacman.prototype.reset = function(){
-
-    this.x = 24*10;
-    this.y = 24*13;
-
-    this.cx = 24*10+tile_width/2;
-    this.cy = 24*13+tile_height/2; 
-
-    this.xVel = 0;
-    this.yVel = 0;
-}
-
 Pacman.prototype.update = function (du) {
     var prevX = this.x;
     var prevY = this.y;
@@ -84,10 +78,6 @@ Pacman.prototype.update = function (du) {
     var nextY = prevY + this.yVel;
     var halfwidth = this.width/2;
     var board = Gameboard.prototype;
-
-    if(this.lives === 0){
-        main.gameOver();
-    }
     
     if (this.x > g_canvas.width) {
         this.x = 0;
@@ -123,17 +113,12 @@ Pacman.prototype.update = function (du) {
         this.turn("down", this.cx, rail, 0, 1);
     }
 
-    //----------------------------------------------------------------------------
-    //console.log("still inside update routine?");
-    //console.log("x: " + this.x + ", y: " +  this.y);
-    //check for collision to the maze tiles
-    //------------------------------------------------------------------------------
-
-    //console.log(this.flag);
-
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
 
+    //console.log(this.x + " " + this.y);
+    //console.log(Gameboard.prototype.tileArray[187].pos)
+    //console.log()
     if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY))
     {
         this.flag = "";
@@ -162,8 +147,13 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     if(tempXVel === 1) xFactor = 23;
     if(tempYVel === 1) yFactor = 23;
 
+    this.tilePosX = Math.floor((nextX+xFactor)/tile_width);
+    this.tilePosY = Math.floor((nextY+yFactor)/tile_width);
+
     var nextTileX = Math.floor((nextX+xFactor)/tile_width);
     var nextTileY = Math.floor((nextY+yFactor)/tile_width);
+
+    //console.log("Pacman" + this.tilePosX + " " + this.tilePosY);
 
     if(g_levelMap[nextTileY][nextTileX] === 1 || // maze
        g_levelMap[nextTileY][nextTileX] === 3)   // ghostbox
@@ -171,9 +161,12 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
         //console.log("halt");
         return true;  
     }
-    return false;
 };
 
+
+/*function() {
+
+}*/
 
 var a = 0;
 var b = 0;
@@ -199,16 +192,16 @@ Pacman.prototype.render = function (ctx) {
     g_sprites[positions[a]].drawAt(ctx, this.x, this.y);
     b += 0.5;
     if (b % 1 === 0) ++a;    
-    if (a === 3) a = 0;
+    if (a === 4) a = 0;
 };
 
 
-/*Pacman.prototype.setPos = function (x, y) {
+Pacman.prototype.setPos = function (x, y) {
     this.x = x;
     this.y = y;
-}
+};
 
-Pacman.prototype.getPos = function () {
+/*Pacman.prototype.getPos = function () {
     return {posX : this.x, posY : this.y};
 }
 

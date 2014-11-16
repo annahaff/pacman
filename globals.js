@@ -15,7 +15,7 @@ var g_canvas = document.getElementById("myCanvas");
 var g_ctx = g_canvas.getContext("2d");
 
 var NOMINAL_UPDATE_INTERVAL = 16.666;
-var SECS_TO_NOMINAL = 1000/NOMINAL_UPDATE_INTERVAL;
+var SECS_TO_NOMINALS = 1000/NOMINAL_UPDATE_INTERVAL;
 
 var tile_width = 24;
 var tile_height = 24;

@@ -54,13 +54,11 @@ clearCanvas: function (ctx) {
     ctx.fillStyle = prevfillStyle;
 },
 
-fillCircle: function (ctx, x, y, r, style) {
-    ctx.save();
+fillCircle: function (ctx, x, y, r) {
     ctx.beginPath();
-    ctx.fillStyle = style || "white";
+    ctx.fillStyle = "white";
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
 },
 
 fillBox: function (ctx, x, y, w, h, style) {
