@@ -13,6 +13,7 @@ function Tile(x, y, type, pos) {
     this.type = type;
     this.pos = pos;
 }
+var score = 0;
 
 
 //drawing tiles stuff
@@ -56,11 +57,13 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "food") 
             {
                 this.type = "foodeaten";              //pacman has eaten food
+                score = score + 20;
             }
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
+                score = score + 50;
             }
         }
     }
@@ -73,16 +76,23 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "food") 
             {
                 this.type = "foodeaten";              //pacman has eaten food
+                score = score + 20;
             }
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager._ghost[0].scaredFlag = true;
+                score = score + 50;
             }
         }
     }
+    document.getElementById('output').innerHTML = "Score: " + score;
     
 };
+
+
+
+
 
 
 

@@ -1,0 +1,19 @@
+
+div{
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 200%;
+	color: #FF0066;
+	font-weight: bold;
+	position: absolute;
+	padding:1%;
+}
+
+#lives{
+	position: absolute;
+	right: 60%;
+}
+
+#output{
+
+}
+

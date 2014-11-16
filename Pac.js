@@ -129,6 +129,7 @@ Pacman.prototype.update = function (du) {
     this.y += this.yVel;
     this.cx = this.x + halfwidth;
     this.cy = this.y + halfwidth; 
+
 };
 
 

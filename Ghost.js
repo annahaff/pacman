@@ -227,9 +227,11 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
 
         if (pacman.lives === 0)
         {
+            
             main.gameOver();
         }
     }
+    document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;
 }
 
 Ghost.prototype.halt = function() {

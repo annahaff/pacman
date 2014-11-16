@@ -28,6 +28,7 @@ var entityManager = {
         this.generateGhost();
     },
 
+
     generateGameboard : function(descr) {
         this._gameboard.push(new Gameboard(descr));
     },
