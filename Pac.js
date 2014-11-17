@@ -81,6 +81,8 @@ Pacman.prototype.update = function (du) {
     }
     this.lifeSpan -= du;
 
+    entityManager.checkCollide();
+
     var prevX = this.x;
     var prevY = this.y;
     var nextX = prevX + this.xVel;

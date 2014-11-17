@@ -182,8 +182,10 @@ Ghost.prototype.update = function (du) {
     //dead mode
     else if (this.mode === 'dead') {
         var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*24, this.initialPos[1]*24]);
-        this.chase(shortestDist, this.tilePosX, this.tilePosY);
+        var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*tile_width, this.initialPos[1]*tile_height]);
+        if (shortestDist != undefined) {
+            this.chase(shortestDist, this.tilePosX, this.tilePosY);
+        }
     }
 
     var newNextX = this.x + this.xVel;
@@ -200,23 +202,20 @@ Ghost.prototype.update = function (du) {
 
 Ghost.prototype.setMode = function (mode) {
     this.mode = mode;
-}
+};
 
 Ghost.prototype.checkPacmanCollision = function(pacman) {
     if((this.x <= pacman.cx && pacman.cx <= this.x+tile_width) && (this.y <= pacman.cy && pacman.cy <= this.y+tile_width)) {
-        if (this.mode === 'chase' || this.mode != 'scatter') {
+        if (this.mode === 'chase' || this.mode === 'scatter') {
             pacman.lives--;
             pacman.reset();
             this.reset();
             if (pacman.lives === 0) {
                 main.gameOver();
             }
-            document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;        
-        }
-        if (this.mode === 'frightened') {
-            this.setMode('dead');
         }
     }
+    document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;        
 };
 
 Ghost.prototype.halt = function() {
@@ -247,40 +246,41 @@ Ghost.prototype.d = 0;
 Ghost.prototype.positionsG = [];   //starting position
 
 Ghost.prototype.render = function (ctx) {
-    if (this.mode === 'dead') {
-        this.positionsG = [63, 63];
-    }
-    else if (this.mode === 'frightened') {
+    if (this.mode === 'frightened') {
         this.positionsG = [30, 31];
     }
     else {
         // going left
         if (this.xVel < 0) {
-            if (this.color === 'red') this.positionsG = [55, 56];
-            if (this.color === 'pink') this.positionsG = [59, 60];
-            if (this.color === 'blue') this.positionsG = [57, 58];
-            if (this.color === 'orange') this.positionsG = [61, 62];
+            if (this.mode === 'dead') this.positionsG = [63, 63];
+            else if (this.color === 'red') this.positionsG = [55, 56];
+            else if (this.color === 'pink') this.positionsG = [59, 60];
+            else if (this.color === 'blue') this.positionsG = [57, 58];
+            else if (this.color === 'orange') this.positionsG = [61, 62];
         }
         // going right
         else if (this.xVel > 0) {
-            if (this.color === 'red') this.positionsG = [21, 22];
-            if (this.color === 'pink') this.positionsG = [25, 26];
-            if (this.color === 'blue') this.positionsG = [23, 24];
-            if (this.color === 'orange') this.positionsG = [27, 28];
+            if (this.mode === 'dead') this.positionsG = [29, 29];
+            else if (this.color === 'red') this.positionsG = [21, 22];
+            else if (this.color === 'pink') this.positionsG = [25, 26];
+            else if (this.color === 'blue') this.positionsG = [23, 24];
+            else if (this.color === 'orange') this.positionsG = [27, 28];
         }
         // going up
         else if (this.yVel < 0) {
-            if (this.color === 'red') this.positionsG = [4, 5];
-            if (this.color === 'pink') this.positionsG = [8, 9];
-            if (this.color === 'blue') this.positionsG = [6, 7];
-            if (this.color === 'orange') this.positionsG = [10, 11];
+            if (this.mode === 'dead') this.positionsG = [12, 12];
+            else if (this.color === 'red') this.positionsG = [4, 5];
+            else if (this.color === 'pink') this.positionsG = [8, 9];
+            else if (this.color === 'blue') this.positionsG = [6, 7];
+            else if (this.color === 'orange') this.positionsG = [10, 11];
         }
         // going down
         else if (this.yVel > 0) {
-            if (this.color === 'red') this.positionsG = [38, 39];
-            if (this.color === 'pink') this.positionsG = [42, 43];
-            if (this.color === 'blue') this.positionsG = [40, 41];
-            if (this.color === 'orange') this.positionsG = [44, 45];
+            if (this.mode === 'dead') this.positionsG = [46, 46];
+            else if (this.color === 'red') this.positionsG = [38, 39];
+            else if (this.color === 'pink') this.positionsG = [42, 43];
+            else if (this.color === 'blue') this.positionsG = [40, 41];
+            else if (this.color === 'orange') this.positionsG = [44, 45];
         }
     }
     g_sprites[this.positionsG[this.c]].drawAt(ctx, this.x, this.y);

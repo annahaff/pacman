@@ -125,12 +125,19 @@ var entityManager = {
                 return;
             }
         }
-    }
-    /*checkCollide : function() {
+    },
+
+    checkCollide : function() {
+        var pacman = this._pacman[0];
         for (var i = 0; i < this._ghost.length; i++) {
-            this._ghost[i]
+            var ghost = this._ghost[i];
+            if (this._ghost[i].mode === 'frightened' && 
+                (ghost.x <= pacman.cx && pacman.cx <= ghost.x+tile_width) &&
+                (ghost.y <= pacman.cy && pacman.cy <= ghost.y+tile_width)) {
+                ghost.setMode('dead');
+            }
         }
-    }*/
+    }
 }
 
 // Some deferred setup which needs the object to have been created first
