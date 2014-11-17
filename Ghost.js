@@ -211,6 +211,7 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
             pacman.reset();
             this.reset();
             if (pacman.lives === 0) {
+                document.getElementById('gameOver').style.display = "block";
                 main.gameOver();
             }
         }
