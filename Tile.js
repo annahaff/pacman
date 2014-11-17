@@ -18,13 +18,13 @@ function Tile(x, y, type, pos) {
 Tile.prototype.makeTile = function(ctx, x, y, type) {
     util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
     if (type === "food") {
-        util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 2.5);
+        util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 2.5, 'white');
     }
     if (type === "magicBean") {
-        util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 4, "#00FF00");
+        util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 4, 'yellow');
     }
     else if (type === "maze") {
-        util.fillBox(ctx, x+2, y+2, tile_width-2, tile_height-2, 'lawngreen') 
+        util.fillBox(ctx, x+3, y+3, tile_width-3, tile_height-3, 'lawngreen') 
     }
     else if (type === "ghostbox") {
         ctx.strokeStyle = "white";
