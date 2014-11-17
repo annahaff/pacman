@@ -150,6 +150,8 @@ var entityManager = {
                (ghost.x <= pacman.cx && pacman.cx <= ghost.x+tile_width) &&
                (ghost.y <= pacman.cy && pacman.cy <= ghost.y+tile_width)) {
                 ghost.setMode('dead');
+                var snd = new Audio("pacman_eatghost.wav"); // buffers automatically when created
+                snd.play();
                 this.resetTimer();
             }
         }
@@ -164,7 +166,6 @@ var entityManager = {
         var gameboard = this._gameboard[0];
         gameboard.fillBoard();
 
-        
     }
 }
 

@@ -213,6 +213,8 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
             if (pacman.lives === 0) {
                 document.getElementById('gameOver').style.display = "block";
                 main.gameOver();
+                var snd = new Audio("pacman_death.wav"); // buffers automatically when created
+                snd.play();
             }
         }
     }

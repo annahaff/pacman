@@ -42,15 +42,22 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
     var verticalEdge = this.x + (tile_width/2);     //center x-coordinate
     var horizontalEdge = this.y + (tile_height/2);  //center y-coordinate
     var pacman = entityManager._pacman[0];
+    var ghost = entityManager._ghost[0];
     //going up/down
     if ((nextY < horizontalEdge && prevY >= horizontalEdge) ||
         (nextY > horizontalEdge && prevY <= horizontalEdge)) {
         if (nextX >= this.x && nextX <= this.x + tile_width) {
             if (this.type === "food") {
+                var snd = new Audio("pacman_coinin.wav"); // buffers automatically when created
+                snd.play();
                 this.type = "foodeaten";              //pacman has eaten food
                 pacman.score = pacman.score + 20;
             }
             if (this.type === "magicBean") {
+                var snd5 = new Audio("pacman_power1.wav"); // buffers automatically when created
+                snd5.play();
+                var snd4 = new Audio("pacman_alarm1.wav");
+                snd4.play();
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager.setMode('frightened');
                 pacman.score = pacman.score + 50;
@@ -62,10 +69,17 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             (nextX > verticalEdge && prevX <= verticalEdge)) {
         if (nextY >= this.y && nextY <= this.y + tile_height) {
             if (this.type === "food") {
+                var snd3 = new Audio("pacman_coinin.wav");
+                snd3.play();
                 this.type = "foodeaten";              //pacman has eaten food
                 pacman.score = pacman.score + 20;
             }
             if (this.type === "magicBean")  {
+                var snd6 = new Audio("pacman_power1.wav"); // buffers automatically when created
+                snd6.play();
+                var snd7 = new Audio("pacman_alarm1.wav");
+                snd7.play();
+                
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager.setMode('frightened');
                 pacman.score = pacman.score + 50;
