@@ -68,7 +68,9 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 entityManager.resetTimer();
                 pacman.score = pacman.score + 50;
             }
-            if(this.type ==="cherry"){
+            if(this.type === "cherry") {
+                var s = new Audio("pacman_intermission.wav");
+                s.play();
                 pacman.score = pacman.score + 100;
                 this.type = "foodeaten";
                 board.cherryEaten();
@@ -96,7 +98,9 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 entityManager.resetTimer();
                 pacman.score = pacman.score + 50;
             }
-            if(this.type ==="cherry"){
+            if(this.type === "cherry") {
+                var s = new Audio("pacman_intermission.wav");
+                s.play();
                 pacman.score = pacman.score + 100;
                 this.type = "foodeaten";
                 board.cherryEaten();

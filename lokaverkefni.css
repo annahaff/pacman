@@ -5,10 +5,9 @@ body {
 
 .score {
 	font-family: "Arial", cursive, sans-serif;
-	/*width: 45%;*/
 	font-size: 1.5em;
 	color: #FF0066;
-	padding: 10px;
+	padding: 15px;
 	bottom: 0;
 	float:left;
 	width: 25%;

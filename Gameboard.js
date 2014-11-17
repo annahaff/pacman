@@ -61,25 +61,6 @@ Gameboard.prototype.fillBoard = function() {
     }
 };
 
-
-Gameboard.prototype.findPos = function (x, y) {
-    for (var j = 0; j < this.tileArray.length; j++) {
-        if (this.tileArray[j].x === x && this.tileArray[j].y === y) {
-            return this.tileArray[j].pos;
-        }
-    }
-};
-
-
-
-Gameboard.prototype.findPos2 = function (xPos, yPos) {
-    for (var j = 0; j < this.tileArray.length; j++) {
-        if (this.tileArray[j].pos[0] === xPos && this.tileArray[j].pos[1] === yPos) {
-            return this.tileArray[j];
-        }
-    }
-}
-
 Gameboard.prototype.firstCherryEaten = false;
 Gameboard.prototype.secondCherryEaten = false;
 
