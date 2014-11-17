@@ -1,5 +1,5 @@
 // ==========
-// Food stuff
+// Tile stuff
 // ==========
 
 "use strict";
@@ -15,11 +15,9 @@ function Tile(x, y, type, pos) {
 }
 var score = 0;
 
-
 //drawing tiles stuff
 Tile.prototype.makeTile = function(ctx, x, y, type) {
     util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
-
     //if tile is food, then draw food
     if (type === "food") {
         util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 2.5);
@@ -28,16 +26,13 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
     if (type === "magicBean") {
         util.fillCircle(ctx, x+(tile_width/2), y+(tile_height/2), 4, "#00FF00");
     }
-
     else if (type === "maze") {
         util.fillBox(ctx, x+2, y+2, tile_width-2, tile_height-2, 'lawngreen') // for Freydis
     }
-
     else if (type === "ghostbox") {
         ctx.strokeStyle = "white";
         ctx.strokeRect(x+1, y+1, tile_width-1, tile_height-1);
     }
-
     else if (type === "foodeaten") {
         util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
     }
@@ -50,44 +45,37 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
 
     //going up/down
     if ((nextY < horizontalEdge && prevY >= horizontalEdge) ||
-        (nextY > horizontalEdge && prevY <= horizontalEdge))
-    {
-        if (nextX >= this.x && nextX <= this.x + tile_width)
-        {
-            if (this.type === "food") 
-            {
+        (nextY > horizontalEdge && prevY <= horizontalEdge)) {
+        if (nextX >= this.x && nextX <= this.x + tile_width) {
+            if (this.type === "food") {
                 this.type = "foodeaten";              //pacman has eaten food
                 score = score + 20;
             }
-            if (this.type === "magicBean") 
-            {
+            if (this.type === "magicBean") {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 //entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
+                entityManager.setMode('frightened');
                 score = score + 50;
             }
         }
     }
     //going left/right
     else if ((nextX < verticalEdge && prevX >= verticalEdge) ||
-            (nextX > verticalEdge && prevX <= verticalEdge))
-    {
-        if (nextY >= this.y && nextY <= this.y + tile_height)
-        {
-            if (this.type === "food") 
-            {
+            (nextX > verticalEdge && prevX <= verticalEdge)) {
+        if (nextY >= this.y && nextY <= this.y + tile_height) {
+            if (this.type === "food") {
                 this.type = "foodeaten";              //pacman has eaten food
                 score = score + 20;
             }
-            if (this.type === "magicBean") 
-            {
+            if (this.type === "magicBean")  {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 //entityManager._ghost[0].scaredFlag = true;
+                entityManager.setMode('frightened');
                 score = score + 50;
             }
         }
     }
     document.getElementById('output').innerHTML = "Score: " + score;
-    
 };
 
 

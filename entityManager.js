@@ -82,7 +82,6 @@ var entityManager = {
                 mode : 'chase'
             }));
         }
-        
     },
 
     update: function(du) {
@@ -104,7 +103,34 @@ var entityManager = {
                 aCategory[j].render(ctx);
             }
         }
+    },
+
+    setMode : function(mode) {
+        for (var i = 0; i < this._ghost.length; ++i) {
+            this._ghost[i].setMode(mode);
+        }
+    },
+
+    switchModes : function() {
+        for (var i = 0; i < this._ghost.length; i++) {
+            if (this._ghost[i].mode === 'scatter') {
+                console.log('entity');
+                this._ghost[i].setMode('chase');
+                if (i === 3) {
+                    this._ghost[0].setMode('scatter');
+                }
+                else {
+                    this._ghost[i+1].setMode('scatter');
+                }
+                return;
+            }
+        }
     }
+    /*checkCollide : function() {
+        for (var i = 0; i < this._ghost.length; i++) {
+            this._ghost[i]
+        }
+    }*/
 }
 
 // Some deferred setup which needs the object to have been created first

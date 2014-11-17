@@ -71,7 +71,16 @@ Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
     }
 }
 
+Pacman.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
+
 Pacman.prototype.update = function (du) {
+    if (this.lifeSpan < 0)
+    {
+        entityManager.switchModes();
+        this.lifeSpan = 15 * SECS_TO_NOMINALS;
+    }
+    this.lifeSpan -= du;
+
     var prevX = this.x;
     var prevY = this.y;
     var nextX = prevX + this.xVel;
@@ -119,8 +128,7 @@ Pacman.prototype.update = function (du) {
     //console.log(this.x + " " + this.y);
     //console.log(Gameboard.prototype.tileArray[187].pos)
     //console.log()
-    if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY))
-    {
+    if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) {
         this.flag = "";
         this.halt();
     }
@@ -133,11 +141,10 @@ Pacman.prototype.update = function (du) {
 };
 
 
-Pacman.prototype.halt = function()
-{
+Pacman.prototype.halt = function() {
     this.xVel = 0;
     this.yVel = 0;
-}
+};
 
 Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) {
     //24 is the tile size  global variable tile_width)
@@ -154,20 +161,12 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     var nextTileX = Math.floor((nextX+xFactor)/tile_width);
     var nextTileY = Math.floor((nextY+yFactor)/tile_width);
 
-    //console.log("Pacman" + this.tilePosX + " " + this.tilePosY);
-
     if(g_levelMap[nextTileY][nextTileX] === 1 || // maze
        g_levelMap[nextTileY][nextTileX] === 3)   // ghostbox
     {
-        //console.log("halt");
         return true;  
     }
 };
-
-
-/*function() {
-
-}*/
 
 var a = 0;
 var b = 0;

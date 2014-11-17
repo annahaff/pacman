@@ -19,7 +19,7 @@ function Ghost(descr) {
 Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
 Ghost.prototype.direction;
-Ghost.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
+//Ghost.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
 
 Ghost.prototype.turn = function (direction, xy, rail, xVel, yVel) {
     for (var i = 0; i < rail.length; i++) {
@@ -133,33 +133,13 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 }
 
-Ghost.prototype.switchModes = function() {
-    //ok 3 draugar í chase
-    //og 1 draugur í scatter
-    var ghostArray = entityManager._ghost;
-    var random = ghostArray[Math.floor(Math.random() * ghostArray.length)];
-    //ok vel random draug úr ghostArray
-    //ef hann hefur mode = scatter þá switchum við því í chase
-    //ef hann hefur mode = chase
-    if (random.mode === 'chase') random.mode = 'scatter';
-    else if (random.mode === 'scatter') random.mode = 'chase';
-}
-
 Ghost.prototype.update = function (du) {
-    //timer resets to 30 seconds when it gets to 0
-    if (this.lifeSpan < 0)
-    {
-        this.switchModes();
-        this.lifeSpan = 15 * SECS_TO_NOMINALS;
-    }
-
     var ghostArray = entityManager._ghost;
     console.log(ghostArray[0].mode + ": " + ghostArray[0].color + 
         ", " + ghostArray[1].mode + ": " + ghostArray[1].color + ", " + 
         ghostArray[2].mode + ": " + ghostArray[2].color + 
         ", " + ghostArray[3].mode + ": " +ghostArray[3].color);
     
-    this.lifeSpan -= du;
 
     var prevX = this.x;
     var prevY = this.y;
@@ -218,16 +198,25 @@ Ghost.prototype.update = function (du) {
     this.cy = this.y + halfwidth; 
 };
 
+Ghost.prototype.setMode = function (mode) {
+    this.mode = mode;
+}
+
 Ghost.prototype.checkPacmanCollision = function(pacman) {
     if((this.x <= pacman.cx && pacman.cx <= this.x+tile_width) && (this.y <= pacman.cy && pacman.cy <= this.y+tile_width)) {
-        pacman.lives--;
-        pacman.reset();
-        this.reset();
-        if (pacman.lives === 0) {
-            main.gameOver();
+        if (this.mode === 'chase' || this.mode != 'scatter') {
+            pacman.lives--;
+            pacman.reset();
+            this.reset();
+            if (pacman.lives === 0) {
+                main.gameOver();
+            }
+            document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;        
+        }
+        if (this.mode === 'frightened') {
+            this.setMode('dead');
         }
     }
-    document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;
 };
 
 Ghost.prototype.halt = function() {
@@ -258,7 +247,10 @@ Ghost.prototype.d = 0;
 Ghost.prototype.positionsG = [];   //starting position
 
 Ghost.prototype.render = function (ctx) {
-    if (this.mode === 'frightened') {
+    if (this.mode === 'dead') {
+        this.positionsG = [63, 63];
+    }
+    else if (this.mode === 'frightened') {
         this.positionsG = [30, 31];
     }
     else {
