@@ -48,10 +48,7 @@ Gameboard.prototype.fillBoard = function() {
             var xPos = j*24;
             var yPos = i*24;
             var mapPos = [j, i];
-            //console.log("x: " + xPos + ", y: " + yPos);
-
-            //if(g_levelMap[i][j] === 0) {var type = "foodeaten"};
-            if(g_levelMap[i][j] === 1) {var type = "maze";}         // m
+            if(g_levelMap[i][j] === 1) {var type = "maze";}              // m
             else if(g_levelMap[i][j] === 2) {var type = "food";}         // f
             else if(g_levelMap[i][j] === 3) {var type = "ghostbox";}     // g
             else if(g_levelMap[i][j] === 4) {var type = "magicBean";}    // b

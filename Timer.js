@@ -11,10 +11,10 @@ function Timer(descr) {
     for (var property in descr) {
         this[property] = descr[property];
     }
-    this.resetSecs = 15*SECS_TO_NOMINALS;
+    this.resetSecs = 10*SECS_TO_NOMINALS;
 };
 
-Timer.prototype.secs = 15*SECS_TO_NOMINALS;
+Timer.prototype.secs = 10*SECS_TO_NOMINALS;
 
 Timer.prototype.reset = function () {
     this.secs = this.resetSecs;
@@ -22,7 +22,7 @@ Timer.prototype.reset = function () {
 
 
 Timer.prototype.update = function (du) {
-    //console.log(this.secs);
+    console.log(this.secs);
     if (this.secs < 0) {
         entityManager.switchModes();
         this.reset();

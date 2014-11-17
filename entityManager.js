@@ -121,22 +121,46 @@ var entityManager = {
                 this._ghost[i].setMode(mode);
             }
         }
-        this.resetTimer();
     },
 
     //set ghost modes to scatter/chase
     switchModes : function() {
+        console.log('switch');
+        var modes = [];
+        var scatter = 0;
+        var chase = 0;
+        var frightened = 0;
+        var dead;
+
         for (var i = 0; i < this._ghost.length; i++) {
             var ghost = this._ghost[i];
-            if (ghost.mode === 'scatter') {// || this._ghost[i].mode === 'frightened') {
-                ghost.setMode('chase');
-                if (i === 3) {
-                    this._ghost[0].setMode('scatter');
-                }
-                else {
-                    this._ghost[i+1].setMode('scatter');
-                }
-                return;
+            modes.push(ghost.mode);
+            if (ghost.mode === 'scatter') scatter++;
+            if (ghost.mode === 'chase') chase++;
+            if (ghost.mode === 'frightened') frightened++;
+            if (ghost.mode === 'dead') dead++;
+        }
+
+        //at least one ghost has to be in scatter mode
+        if (chase === 4) this._ghost[0].setMode('scatter');
+        //if all ghosts are in either scatter or chase mode we switch between chase and scatter
+        else if (scatter === 1 && chase === 3) {
+            var index = modes.indexOf('scatter');
+            this._ghost[index].setMode('chase');
+            if (index === 3) this._ghost[index].setMode('scatter');
+            else this._ghost[index+1].setMode('scatter');
+        }
+        //if all ghosts are in frightened mode
+        else if (frightened === 4) {
+            this._ghost[0].setMode('scatter');
+            this._ghost[1].setMode('chase');
+            this._ghost[2].setMode('chase');
+            this._ghost[3].setMode('chase');
+        }
+        //if at least one ghost is in frightened mode
+        else if (frightened > 0 && frightened < 4) {
+            for (var j = 0; j < modes.length; j++) {
+                if (this._ghost[j].mode === 'frightened') this._ghost[j].setMode('chase');    
             }
         }
     },
@@ -152,11 +176,11 @@ var entityManager = {
                 ghost.setMode('dead');
                 var snd = new Audio("pacman_eatghost.wav"); // buffers automatically when created
                 snd.play();
-                this.resetTimer();
             }
         }
     },
-    restart : function(){
+
+    restart : function() {
         var pacman = this._pacman[0];
         main._isGameOver = false;
         main.init();
@@ -165,7 +189,6 @@ var entityManager = {
         document.getElementById('gameOver').style.display = "none";
         var gameboard = this._gameboard[0];
         gameboard.fillBoard();
-
     }
 }
 

@@ -13,13 +13,13 @@ function Ghost(descr) {
         this.reset_x = this.x;
         this.reset_y = this.y;
         this.initialPos = [this.tilePosX, this.tilePosY];
+        this.initialMode = this.mode;
     }
 }
 
 Ghost.prototype.xVel = 0;
 Ghost.prototype.yVel = 0;
 Ghost.prototype.direction;
-//Ghost.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
 
 Ghost.prototype.turn = function (direction, xy, rail, xVel, yVel) {
     for (var i = 0; i < rail.length; i++) {
@@ -69,11 +69,11 @@ Ghost.prototype.shortestDistance = function (neighbors, target) {
     var index = checkArray.indexOf(shortest);        
     shortestDist = posArray[index];
     if (shortestDist != undefined) return shortestDist.pos;
-}
+};
 
 Array.prototype.min = function() {
     return Math.min.apply(null, this);
-}
+};
 
 // check legal directions for ghosts (since they cannot reverse direction)
 Ghost.prototype.checkNeighbors = function () {
@@ -95,12 +95,11 @@ Ghost.prototype.checkNeighbors = function () {
         legal_neighbors.push([this.tilePosX+1, this.tilePosY]);
     }
     return legal_neighbors;
-}
+};
 
 // if ghost is in chase mode everything works
 // in scatter mode, each ghost has a specific targetX and targetY tile
-// they all seem to be heading for the same target now, needs to be fixed :P
-Ghost.prototype.chase = function (shortestDist, tilePosX, tilePosY) {       
+Ghost.prototype.chase = function (shortestDist, tilePosX, tilePosY) {    
     if (shortestDist[0] < tilePosX) {
         this.turn("left", this.cy, rail, -1, 0);
     }
@@ -112,8 +111,9 @@ Ghost.prototype.chase = function (shortestDist, tilePosX, tilePosY) {
     }
     if (shortestDist[1] > tilePosY) {
         this.turn("down", this.cx, rail, 0, 1);
-    }            
-}
+    }      
+
+};
 
 // frightened mode, ghost changes color, decreases speed and goes into directions
 // based on pesudorandom choices
@@ -131,16 +131,9 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     if (random[1] > tilePosY) {
         this.turn("down", this.cx, rail, 0, 0.5);
     }  
-}
+};
 
 Ghost.prototype.update = function (du) {
-    var ghostArray = entityManager._ghost;
-    //console.log(ghostArray[0].mode + ": " + ghostArray[0].color + 
-      //  ", " + ghostArray[1].mode + ": " + ghostArray[1].color + ", " + 
-        //ghostArray[2].mode + ": " + ghostArray[2].color + 
-        //", " + ghostArray[3].mode + ": " +ghostArray[3].color);
-    
-
     var prevX = this.x;
     var prevY = this.y;
     var nextX = prevX + this.xVel;
@@ -157,37 +150,58 @@ Ghost.prototype.update = function (du) {
     if (this.x < 0) {
         this.x = g_canvas.width;
     }
-    
-    //chase mode
-    if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
-        var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
-        if (shortestDist != undefined) {
-            this.chase(shortestDist, this.tilePosX, this.tilePosY);          
-        }
-    }
-    //scatter mode
-    else if (this.mode === 'scatter') {
-        var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
-        if (shortestDist != undefined) {
-            this.chase(shortestDist, this.tilePosX, this.tilePosY);
-        }
-    }
-    //frightened mode
-    else if (this.mode === 'frightened') {
-        var neighbors = this.checkNeighbors();
-        this.frightened(neighbors, this.tilePosX, this.tilePosY);
-    }
-    //dead mode
-    else if (this.mode === 'dead') {
-        var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*tile_width, this.initialPos[1]*tile_height]);
-        if (shortestDist != undefined) {
-            this.chase(shortestDist, this.tilePosX, this.tilePosY);
-        }
-    }
 
+    if (g_levelMap[this.tilePosY][this.tilePosX] === 1) {
+        console.log(this.color + ", x " + this.tilePosX + ", y " + this.tilePosY);
+        if (this.direction === 'down') {
+            this.turn("up", this.cx, rail, 0, -1);
+        }
+        else if (this.direction === 'up') {
+            this.turn("down", this.cx, rail, 0, 1);
+        }
+        else if (this.direction === 'right') {
+            this.turn("left", this.cy, rail, -1, 0);
+        }
+        else if (this.direction === 'left') {
+            this.turn("right", this.cy, rail, 1, 0);
+        }
+    }
+    
+    else {
+        //chase mode
+        if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
+            var neighbors = this.checkNeighbors();
+            var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
+            if (shortestDist != undefined) {
+                this.chase(shortestDist, this.tilePosX, this.tilePosY);          
+            }
+        }
+        //scatter mode
+        else if (this.mode === 'scatter') {
+            var neighbors = this.checkNeighbors();
+            var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
+            if (shortestDist != undefined) {
+                this.chase(shortestDist, this.tilePosX, this.tilePosY);
+            }
+        }
+        //frightened mode
+        else if (this.mode === 'frightened') {
+            var neighbors = this.checkNeighbors();
+            this.frightened(neighbors, this.tilePosX, this.tilePosY);
+        }
+        //dead mode
+        else if (this.mode === 'dead') {
+            var neighbors = this.checkNeighbors();
+            var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*tile_width, this.initialPos[1]*tile_height]);
+            if (shortestDist != undefined) {
+                this.chase(shortestDist, this.tilePosX, this.tilePosY);
+                if (this.tilePosX === this.initialPos[0] && this.tilePosY === this.initialPos[1]) {
+                    this.setMode('chase');
+                }
+            }
+        }
+    }
+    
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
 
@@ -208,13 +222,13 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
     if((this.x <= pacman.cx && pacman.cx <= this.x+tile_width) && (this.y <= pacman.cy && pacman.cy <= this.y+tile_width)) {
         if (this.mode === 'chase' || this.mode === 'scatter') {
             pacman.lives--;
+            var snd = new Audio("pacman_death.wav"); // buffers automatically when created
+            snd.play();
             pacman.reset();
             this.reset();
             if (pacman.lives === 0) {
                 document.getElementById('gameOver').style.display = "block";
                 main.gameOver();
-                var snd = new Audio("pacman_death.wav"); // buffers automatically when created
-                snd.play();
             }
         }
     }
@@ -249,47 +263,50 @@ Ghost.prototype.d = 0;
 Ghost.prototype.positionsG = [];   //starting position
 
 Ghost.prototype.render = function (ctx) {
-    if (this.mode === 'frightened') {
-        this.positionsG = [30, 31];
+    if (this.mode === 'frightened' && entityManager._timer[0].secs > 180) {
+        this.positionsG = [30, 31, 30, 31];
+    }
+    else if (this.mode === 'frightened' && entityManager._timer[0].secs < 180) {
+        this.positionsG = [31, 31, 32, 32];
     }
     else {
         // going left
         if (this.xVel < 0) {
-            if (this.mode === 'dead') this.positionsG = [63, 63];
-            else if (this.color === 'red') this.positionsG = [55, 56];
-            else if (this.color === 'pink') this.positionsG = [59, 60];
-            else if (this.color === 'blue') this.positionsG = [57, 58];
-            else if (this.color === 'orange') this.positionsG = [61, 62];
+            if (this.mode === 'dead') this.positionsG = [63, 63, 63, 63];
+            else if (this.color === 'red') this.positionsG = [55, 56, 55, 56];
+            else if (this.color === 'pink') this.positionsG = [59, 60, 59, 60];
+            else if (this.color === 'blue') this.positionsG = [57, 58, 57, 58];
+            else if (this.color === 'orange') this.positionsG = [61, 62, 61, 62];
         }
         // going right
         else if (this.xVel > 0) {
-            if (this.mode === 'dead') this.positionsG = [29, 29];
-            else if (this.color === 'red') this.positionsG = [21, 22];
-            else if (this.color === 'pink') this.positionsG = [25, 26];
-            else if (this.color === 'blue') this.positionsG = [23, 24];
-            else if (this.color === 'orange') this.positionsG = [27, 28];
+            if (this.mode === 'dead') this.positionsG = [29, 29, 29, 29];
+            else if (this.color === 'red') this.positionsG = [21, 22, 21, 22];
+            else if (this.color === 'pink') this.positionsG = [25, 26, 25, 26];
+            else if (this.color === 'blue') this.positionsG = [23, 24, 23, 24];
+            else if (this.color === 'orange') this.positionsG = [27, 28, 27, 28];
         }
         // going up
         else if (this.yVel < 0) {
-            if (this.mode === 'dead') this.positionsG = [12, 12];
-            else if (this.color === 'red') this.positionsG = [4, 5];
-            else if (this.color === 'pink') this.positionsG = [8, 9];
-            else if (this.color === 'blue') this.positionsG = [6, 7];
-            else if (this.color === 'orange') this.positionsG = [10, 11];
+            if (this.mode === 'dead') this.positionsG = [12, 12, 12, 12];
+            else if (this.color === 'red') this.positionsG = [4, 5, 4, 5];
+            else if (this.color === 'pink') this.positionsG = [8, 9, 8, 9];
+            else if (this.color === 'blue') this.positionsG = [6, 7, 6, 7];
+            else if (this.color === 'orange') this.positionsG = [10, 11, 10, 11];
         }
         // going down
         else if (this.yVel > 0) {
-            if (this.mode === 'dead') this.positionsG = [46, 46];
-            else if (this.color === 'red') this.positionsG = [38, 39];
-            else if (this.color === 'pink') this.positionsG = [42, 43];
-            else if (this.color === 'blue') this.positionsG = [40, 41];
-            else if (this.color === 'orange') this.positionsG = [44, 45];
+            if (this.mode === 'dead') this.positionsG = [46, 46, 46, 46];
+            else if (this.color === 'red') this.positionsG = [38, 39, 38, 39];
+            else if (this.color === 'pink') this.positionsG = [42, 43, 42, 43];
+            else if (this.color === 'blue') this.positionsG = [40, 41, 40, 41];
+            else if (this.color === 'orange') this.positionsG = [44, 45, 44, 45];
         }
     }
     g_sprites[this.positionsG[this.c]].drawAt(ctx, this.x, this.y);
     this.d += 0.5;
     if (this.d % 1 === 0) ++this.c;   
-    if (this.c === 2) this.c = 0;
+    if (this.c === 4) this.c = 0;
 };
 
 Ghost.prototype.setPos = function (x, y) {
@@ -298,9 +315,9 @@ Ghost.prototype.setPos = function (x, y) {
 };
 
 Ghost.prototype.reset = function () {
-    for (var i = 0; i < entityManager._ghost.length; i++)
-    {
+    for (var i = 0; i < entityManager._ghost.length; i++) {
         var ghost = entityManager._ghost[i];
         ghost.setPos(ghost.reset_x, ghost.reset_y);
+        ghost.setMode(ghost.initialMode);
     }
 };

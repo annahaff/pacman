@@ -31,6 +31,7 @@ Pacman.prototype.flag;
 
 Pacman.prototype.reset = function () {
     this.setPos(this.reset_x, this.reset_y);
+    this.direction === 'left';
 };
 
 var rail = [];
@@ -76,17 +77,10 @@ Pacman.prototype.update = function (du) {
     var halfwidth = this.width/2;
     var board = Gameboard.prototype;
     
-    if (this.x > g_canvas.width) {
-        this.x = 0;
-    }
-    if (this.x < 0) {
-        this.x = g_canvas.width;
-    }
+    if (this.x > g_canvas.width) this.x = 0;
+    if (this.x < 0) this.x = g_canvas.width;
+    if (keys[this.GO_RIGHT] || keys[this.GO_LEFT] || keys[this.GO_UP] || keys[this.GO_DOWN]) this.flag = "";
 
-    if (keys[this.GO_RIGHT] || keys[this.GO_LEFT] || keys[this.GO_UP] || keys[this.GO_DOWN])
-    {
-        this.flag = "";
-    }
     //check for food-tile collision
     for (var i = 0; i < board.tileArray.length; i++)
     {
@@ -94,18 +88,10 @@ Pacman.prototype.update = function (du) {
             nextX + halfwidth, nextY + halfwidth);
     }
 
-    if (keys[this.GO_RIGHT] || this.flag === "right") {
-        this.turn("right", this.cy, rail, 1, 0);
-    }
-    else if (keys[this.GO_LEFT] || this.flag === "left") {
-        this.turn("left", this.cy, rail, -1, 0);
-    }
-    else if (keys[this.GO_UP] || this.flag === "up") {
-        this.turn("up", this.cx, rail, 0, -1);
-    }
-    else if (keys[this.GO_DOWN] || this.flag === "down") {
-        this.turn("down", this.cx, rail, 0, 1);
-    }
+    if (keys[this.GO_RIGHT] || this.flag === "right") this.turn("right", this.cy, rail, 1, 0);
+    else if (keys[this.GO_LEFT] || this.flag === "left") this.turn("left", this.cy, rail, -1, 0);
+    else if (keys[this.GO_UP] || this.flag === "up") this.turn("up", this.cx, rail, 0, -1);
+    else if (keys[this.GO_DOWN] || this.flag === "down") this.turn("down", this.cx, rail, 0, 1);
 
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
@@ -119,9 +105,7 @@ Pacman.prototype.update = function (du) {
     this.y += this.yVel;
     this.cx = this.x + halfwidth;
     this.cy = this.y + halfwidth; 
-
 };
-
 
 Pacman.prototype.halt = function() {
     this.xVel = 0;
@@ -156,21 +140,13 @@ var positions = [18, 18, 18, 18];   //starting position
 
 Pacman.prototype.render = function (ctx) {
     // going left
-    if (this.xVel < 0) {
-        positions = [51, 52, 53, 54];
-    }
+    if (this.xVel < 0) positions = [51, 52, 53, 54];
     // going right
-    else if (this.xVel > 0) {
-        positions = [17, 18, 19, 20];
-    }
+    else if (this.xVel > 0) positions = [17, 18, 19, 20];
     // going up
-    else if (this.yVel < 0) {
-        positions = [0, 1, 2, 3];
-    }
+    else if (this.yVel < 0) positions = [0, 1, 2, 3];
     // going down
-    else if (this.yVel > 0) {
-        positions = [34, 35, 36, 37];
-    }
+    else if (this.yVel > 0) positions = [34, 35, 36, 37];
     g_sprites[positions[a]].drawAt(ctx, this.x, this.y);
     b += 0.5;
     if (b % 1 === 0) ++a;    
@@ -182,18 +158,4 @@ Pacman.prototype.setPos = function (x, y) {
     this.x = x;
     this.y = y;
 };
-
-/*Pacman.prototype.getPos = function () {
-    return {posX : this.x, posY : this.y};
-}
-
-/*Pacman.prototype.reset = function () {
-    this.setPos(this.reset_cx, this.reset_cy);    
-    this.halt();
-};
-
-Pacman.prototype.wrapPosition = function () {
-    this.x = util.wrapRange(this.x, 0, g_canvas.width);
-    this.y = util.wrapRange(this.y, 0, g_canvas.height);
-};*/
 
