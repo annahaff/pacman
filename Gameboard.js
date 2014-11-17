@@ -91,5 +91,11 @@ Gameboard.prototype.render = function (ctx) {
     }
 };
 
+Gameboard.prototype.clearBoard = function(){
+    while(this.tileArray.length > 0){
+        this.tileArray.pop();
+    }
+}
+
 Gameboard.prototype.fillBoard();
 

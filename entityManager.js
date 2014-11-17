@@ -181,15 +181,38 @@ var entityManager = {
     },
 
     restart : function() {
-        var pacman = this._pacman[0];
+        /*var pacman = this._pacman[0];
         main._isGameOver = false;
         main.init();
         pacman.score = 0;
         pacman.lives = 3;
         document.getElementById('gameOver').style.display = "none";
         var gameboard = this._gameboard[0];
+        gameboard.fillBoard();*/
+        console.log("pressing restart");
+        this.clearEverything();
+        main._isGameOver = false;
+        document.getElementById('gameOver').style.display = "none";
+
+        this.init();
+        var gameboard = this._gameboard[0];
+        gameboard.clearBoard();
         gameboard.fillBoard();
+
+        main.init();
+    },
+
+    clearEverything : function(){
+        for (var i = 0; i < this._categories.length; ++i) {
+            var aCategory = this._categories[i];
+                while(aCategory.length > 0){
+                    aCategory.pop();
+                }
+        }
     }
+
+
+
 }
 
 // Some deferred setup which needs the object to have been created first

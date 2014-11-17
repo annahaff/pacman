@@ -22,7 +22,7 @@ Timer.prototype.reset = function () {
 
 
 Timer.prototype.update = function (du) {
-    console.log(this.secs);
+    //console.log(this.secs);
     if (this.secs < 0) {
         entityManager.switchModes();
         this.reset();
