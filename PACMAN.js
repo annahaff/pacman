@@ -69,12 +69,14 @@ var g_images = {};
 
 function requestPreloads() {
     var requiredImages = {
-	pacman : "https://notendur.hi.is/frh12/Lokaverkefni/pacman.png"
+	pacman : "https://notendur.hi.is/frh12/Lokaverkefni/pacman.png",
+    cherry : "cherry.png"
     };
     imagesPreload(requiredImages, g_images, preloadDone);
 }
 
 var g_sprites = [];
+var g_cherrySprite;
 
 function preloadDone() {
 
@@ -91,6 +93,8 @@ function preloadDone() {
             g_sprites.push(sprite);
         }
     }
+
+    g_cherrySprite = new Sprite(g_images.cherry, 0, 0, 24, 24);
 
     main.init();
 }

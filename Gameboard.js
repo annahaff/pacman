@@ -13,6 +13,8 @@ function Gameboard(descr) {
     }
 }
 
+Gameboard.prototype.foodCounter = 0;
+
 // Initial, inheritable, default values
 Gameboard.prototype.tileArray = [];
 var g_levelMap = [                
@@ -54,7 +56,7 @@ Gameboard.prototype.fillBoard = function() {
             else if(g_levelMap[i][j] === 4) {var type = "magicBean";}    // b
             else {var type = "foodeaten";}
 
-            this.tileArray.push(new Tile(xPos, yPos, type, mapPos));        
+            this.tileArray.push(new Tile(xPos, yPos, type, mapPos)); 
         }
     }
 };
@@ -78,7 +80,31 @@ Gameboard.prototype.findPos2 = function (xPos, yPos) {
     }
 }
 
+Gameboard.prototype.firstCherryEaten = false;
+Gameboard.prototype.secondCherryEaten = false;
+
+Gameboard.prototype.cherryEaten = function(){
+    if(!this.firstCherryEaten){
+        this.firstCherryEaten = true;
+        return;
+    }
+    if(!this.secondCherryEaten){
+        this.secondCherryEaten = true;
+        return;
+    }
+}
+
 Gameboard.prototype.update = function (du) {
+    //setja cherry a stað 10, 10 í tile position (fyrir neðan draugabox);
+    if(this.foodCounter > 49 && !this.firstCherryEaten){
+        var cherryPosition = 10 + 10*g_levelMap[10].length; //frá 2d í 1d fylkja index
+        this.tileArray[220].type = "cherry";
+    }
+
+    if(this.foodCounter > 124 && this.firstCherryEaten && !this.secondCherryEaten){
+        var cherryPosition = 10 + 10*g_levelMap[10].length; //frá 2d í 1d fylkja index
+        this.tileArray[220].type = "cherry";
+    }
 
 };
 
@@ -89,6 +115,13 @@ Gameboard.prototype.render = function (ctx) {
         Tile.prototype.makeTile(ctx, this.tileArray[i].x, this.tileArray[i].y, 
                                 this.tileArray[i].type);     
     }
+
+
+    /*
+    ctx.save();
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.tileArray[220].x, this.tileArray[220].y, 24, 24);
+    ctx.restore();*/
 };
 
 Gameboard.prototype.clearBoard = function(){
@@ -98,4 +131,6 @@ Gameboard.prototype.clearBoard = function(){
 }
 
 Gameboard.prototype.fillBoard();
+
+
 

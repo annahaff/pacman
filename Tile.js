@@ -32,13 +32,21 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
     }
     else if (type === "foodeaten") {
         util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
-    }   
+    }
+
+    if(type === "cherry"){
+        g_cherrySprite.drawAt(ctx, x, y);
+    }
+
 };
 
 Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
     var verticalEdge = this.x + (tile_width/2);     //center x-coordinate
     var horizontalEdge = this.y + (tile_height/2);  //center y-coordinate
     var pacman = entityManager._pacman[0];
+    var board = entityManager._gameboard[0];
+ 
+
     //going up/down
     if ((nextY < horizontalEdge && prevY >= horizontalEdge) ||
         (nextY > horizontalEdge && prevY <= horizontalEdge)) {
@@ -48,6 +56,7 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 snd.play();
                 this.type = "foodeaten";              //pacman has eaten food
                 pacman.score = pacman.score + 20;
+                board.foodCounter += 1;
             }
             if (this.type === "magicBean") {
                 var snd5 = new Audio("pacman_power1.wav"); // buffers automatically when created
@@ -58,6 +67,11 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 entityManager.setMode('frightened');
                 entityManager.resetTimer();
                 pacman.score = pacman.score + 50;
+            }
+            if(this.type ==="cherry"){
+                pacman.score = pacman.score + 100;
+                this.type = "foodeaten";
+                board.cherryEaten();
             }
         }
     }
@@ -70,6 +84,7 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 snd3.play();
                 this.type = "foodeaten";              //pacman has eaten food
                 pacman.score = pacman.score + 20;
+                entityManager._gameboard[0].foodCounter += 1;
             }
             if (this.type === "magicBean")  {
                 var snd6 = new Audio("pacman_power1.wav"); // buffers automatically when created
@@ -80,6 +95,11 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 entityManager.setMode('frightened');
                 entityManager.resetTimer();
                 pacman.score = pacman.score + 50;
+            }
+            if(this.type ==="cherry"){
+                pacman.score = pacman.score + 100;
+                this.type = "foodeaten";
+                board.cherryEaten();
             }
         }
     }
