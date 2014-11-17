@@ -13,25 +13,26 @@ function Pacman(descr) {
     }
     this.reset_x = this.x;
     this.reset_y = this.y;
+    this.initialPos = this.positions;
 };
 
+// Initial, inheritable, default values
 Pacman.prototype.GO_LEFT   = 'A'.charCodeAt(0);
 Pacman.prototype.GO_RIGHT  = 'D'.charCodeAt(0);
 Pacman.prototype.GO_UP     = 'W'.charCodeAt(0);
 Pacman.prototype.GO_DOWN   = 'S'.charCodeAt(0);
-
-
-// Initial, inheritable, default values
-
 Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
 Pacman.prototype.tilePosX = 0;
 Pacman.prototype.tilePosY = 0; 
 Pacman.prototype.flag;
+Pacman.prototype.renderCount = 0;
+Pacman.prototype.b = 0;
+Pacman.prototype.positions = [18, 18, 18, 18];   //starting position
 
 Pacman.prototype.reset = function () {
     this.setPos(this.reset_x, this.reset_y);
-    this.direction === 'left';
+    this.positions = this.initialPos;
 };
 
 var rail = [];
@@ -114,7 +115,6 @@ Pacman.prototype.halt = function() {
 
 Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) {
     //24 is the tile size  global variable tile_width)
-
     var xFactor = 0;
     var yFactor = 0;
 
@@ -134,25 +134,20 @@ Pacman.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY)
     }
 };
 
-var a = 0;
-var b = 0;
-var positions = [18, 18, 18, 18];   //starting position
-
 Pacman.prototype.render = function (ctx) {
     // going left
-    if (this.xVel < 0) positions = [51, 52, 53, 54];
+    if (this.xVel < 0) this.positions = [51, 52, 53, 54];
     // going right
-    else if (this.xVel > 0) positions = [17, 18, 19, 20];
+    else if (this.xVel > 0) this.positions = [17, 18, 19, 20];
     // going up
-    else if (this.yVel < 0) positions = [0, 1, 2, 3];
+    else if (this.yVel < 0) this.positions = [0, 1, 2, 3];
     // going down
-    else if (this.yVel > 0) positions = [34, 35, 36, 37];
-    g_sprites[positions[a]].drawAt(ctx, this.x, this.y);
-    b += 0.5;
-    if (b % 1 === 0) ++a;    
-    if (a === 4) a = 0;
+    else if (this.yVel > 0) this.positions = [34, 35, 36, 37];
+    g_sprites[this.positions[this.renderCount]].drawAt(ctx, this.x, this.y);
+    this.b += 0.5;
+    if (this.b % 1 === 0) ++this.renderCount;    
+    if (this.renderCount === 4) this.renderCount = 0;
 };
-
 
 Pacman.prototype.setPos = function (x, y) {
     this.x = x;

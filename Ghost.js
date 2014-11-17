@@ -258,7 +258,7 @@ Ghost.prototype.checkMazeCollision = function(tempXVel, tempYVel, nextX, nextY) 
     }
 };
 
-Ghost.prototype.c = 0;
+Ghost.prototype.renderCount = 0;
 Ghost.prototype.d = 0;
 Ghost.prototype.positionsG = [];   //starting position
 
@@ -303,10 +303,10 @@ Ghost.prototype.render = function (ctx) {
             else if (this.color === 'orange') this.positionsG = [44, 45, 44, 45];
         }
     }
-    g_sprites[this.positionsG[this.c]].drawAt(ctx, this.x, this.y);
+    g_sprites[this.positionsG[this.renderCount]].drawAt(ctx, this.x, this.y);
     this.d += 0.5;
-    if (this.d % 1 === 0) ++this.c;   
-    if (this.c === 4) this.c = 0;
+    if (this.d % 1 === 0) ++this.renderCount;   
+    if (this.renderCount === 4) this.renderCount = 0;
 };
 
 Ghost.prototype.setPos = function (x, y) {
