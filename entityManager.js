@@ -50,7 +50,8 @@ var entityManager = {
             height : tile_height,
             cx : 24+tile_width/2,
             cy : 24+tile_height/2,
-            lives : 3
+            lives : 3,
+            score : 0
         }));
     },
 
@@ -152,6 +153,18 @@ var entityManager = {
                 this.resetTimer();
             }
         }
+    },
+    restart : function(){
+        var pacman = this._pacman[0];
+        main._isGameOver = false;
+        main.init();
+        pacman.score = 0;
+        pacman.lives = 3;
+        document.getElementById('gameOver').style.display = "none";
+        var gameboard = this._gameboard[0];
+        gameboard.fillBoard();
+
+        
     }
 }
 

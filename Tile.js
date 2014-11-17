@@ -13,7 +13,6 @@ function Tile(x, y, type, pos) {
     this.type = type;
     this.pos = pos;
 }
-var score = 0;
 
 //drawing tiles stuff
 Tile.prototype.makeTile = function(ctx, x, y, type) {
@@ -42,19 +41,19 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
 Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
     var verticalEdge = this.x + (tile_width/2);     //center x-coordinate
     var horizontalEdge = this.y + (tile_height/2);  //center y-coordinate
-
+    var pacman = entityManager._pacman[0];
     //going up/down
     if ((nextY < horizontalEdge && prevY >= horizontalEdge) ||
         (nextY > horizontalEdge && prevY <= horizontalEdge)) {
         if (nextX >= this.x && nextX <= this.x + tile_width) {
             if (this.type === "food") {
                 this.type = "foodeaten";              //pacman has eaten food
-                score = score + 20;
+                pacman.score = pacman.score + 20;
             }
             if (this.type === "magicBean") {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager.setMode('frightened');
-                score = score + 50;
+                pacman.score = pacman.score + 50;
             }
         }
     }
@@ -64,16 +63,16 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
         if (nextY >= this.y && nextY <= this.y + tile_height) {
             if (this.type === "food") {
                 this.type = "foodeaten";              //pacman has eaten food
-                score = score + 20;
+                pacman.score = pacman.score + 20;
             }
             if (this.type === "magicBean")  {
                 this.type = "foodeaten";              //pacman has eaten magic food
                 entityManager.setMode('frightened');
-                score = score + 50;
+                pacman.score = pacman.score + 50;
             }
         }
     }
-    document.getElementById('output').innerHTML = "Score: " + score;
+    document.getElementById('output').innerHTML = "Score: " + pacman.score;
 };
 
 
