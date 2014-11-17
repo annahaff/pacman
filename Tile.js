@@ -62,7 +62,7 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
-                entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
+                //entityManager._ghost[0].scaredFlag = true; // vantar að útfæra tímavirkni sem breytir aftur í false
                 score = score + 50;
             }
         }
@@ -81,7 +81,7 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
             if (this.type === "magicBean") 
             {
                 this.type = "foodeaten";              //pacman has eaten magic food
-                entityManager._ghost[0].scaredFlag = true;
+                //entityManager._ghost[0].scaredFlag = true;
                 score = score + 50;
             }
         }

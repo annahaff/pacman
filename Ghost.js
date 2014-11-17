@@ -132,27 +132,6 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 }
 
-/*Ghost.prototype.switchModes() {
-    //ok 3 draugar í chase
-    //og 1 draugur í scatter
-    var ghostArray = entityManager._ghost;
-    for (var i = 0; i < 3; i++)
-    {
-        if (ghostArray[i].mode === 'scatter') {
-            ghostArray[i].mode = 'chase';
-            ghostArray[i+1].mode = 'scatter';
-            return;
-        }
-    }
-    console.log(ghostArray[0].mode + " " + ghostArray[1].mode + " " + 
-        ghostArray[2].mode + " " + ghostArray[3].mode);
-}*/
-
-/*Ghost.prototype.resetModes = function () {
-    this.mode = 'scatter';
-    console.log(this.mode);
-}*/
-
 Ghost.prototype.switchModes = function() {
     //ok 3 draugar í chase
     //og 1 draugur í scatter
@@ -188,6 +167,8 @@ Ghost.prototype.update = function (du) {
     var halfwidth = 12;
     var board = Gameboard.prototype;
     var pacman = entityManager._pacman[0];
+    
+    this.checkPacmanCollision(pacman);
 
     if (this.x > g_canvas.width) {
         this.x = 0;
@@ -196,13 +177,8 @@ Ghost.prototype.update = function (du) {
         this.x = g_canvas.width;
     }
     
-    //if (lifeSpan >= 1200) {
     //chase mode
     if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
-        //this.mode = 'chase';
-        
-        this.checkPacmanCollision(pacman);
-
         var neighbors = this.checkNeighbors();
         var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
         if (shortestDist != undefined) {
@@ -210,24 +186,15 @@ Ghost.prototype.update = function (du) {
         }
     }
     //scatter mode
-    //else if (lifeSpan >= 600) {
     else if (this.mode === 'scatter') {
-        //this.mode = 'scatter';
-
         var neighbors = this.checkNeighbors();
         var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
         if (shortestDist != undefined) {
             this.chase(shortestDist, this.tilePosX, this.tilePosY);
         }
-        /*this.mode = 'scatter';
-        var neighbors = this.checkNeighbors();
-        var shortestDist = this.shortestDistance(neighbors, [this.targetX, this.targetY]);
-        this.scatter(this.targetX, this.targetY, this.tilePosX, this.tilePosY);*/
     }
     //frightened mode
-    //else if (lifeSpan >= 1) {
     else if (this.mode === 'frightened') {
-        //this.mode = 'frightened';
         var neighbors = this.checkNeighbors();
         this.frightened(neighbors, this.tilePosX, this.tilePosY);
     }
@@ -245,22 +212,19 @@ Ghost.prototype.update = function (du) {
     this.cy = this.y + halfwidth; 
 };
 
-// check if ghost has caught pacman
+
 Ghost.prototype.checkPacmanCollision = function(pacman) {
-    if (this.cx === pacman.cx && this.cy === pacman.cy) {       
+    if((this.x <= pacman.cx && pacman.cx <= this.x+tile_width) && (this.y <= pacman.cy && pacman.cy <= this.y+tile_width)) {
         pacman.lives--;
-        
         pacman.reset();
         this.reset();
-
         if (pacman.lives === 0)
         {
-            
             main.gameOver();
         }
     }
     document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;
-}
+};
 
 Ghost.prototype.halt = function() {
     this.xVel = 0;
