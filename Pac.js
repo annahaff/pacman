@@ -13,9 +13,7 @@ function Pacman(descr) {
     }
     this.reset_x = this.x;
     this.reset_y = this.y;
-}
-
-var pacman = Pacman.prototype;
+};
 
 Pacman.prototype.GO_LEFT   = 'A'.charCodeAt(0);
 Pacman.prototype.GO_RIGHT  = 'D'.charCodeAt(0);
@@ -29,16 +27,13 @@ Pacman.prototype.xVel = 0;
 Pacman.prototype.yVel = 0;
 Pacman.prototype.tilePosX = 0;
 Pacman.prototype.tilePosY = 0; 
+Pacman.prototype.flag;
 
 Pacman.prototype.reset = function () {
     this.setPos(this.reset_x, this.reset_y);
-    //this.halt();
 };
 
-
-Pacman.prototype.flag;
 var rail = [];
-
 for (var i = 12; i < g_canvas.width; i += 24) {
     for (var j = 12; j < g_canvas.height; j += 24) {
         rail.push([i, j]);
@@ -48,7 +43,6 @@ for (var i = 12; i < g_canvas.width; i += 24) {
 Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
 {
     this.flag = flag;
-    //console.log(rail[1]);
     for (var i = 0; i < rail.length; i++)
     {
         if (xy === this.cy) var r = rail[i][1];
@@ -74,15 +68,7 @@ Pacman.prototype.turn = function (flag, xy, rail, xVel, yVel)
 Pacman.prototype.lifeSpan = 15 * SECS_TO_NOMINALS;
 
 Pacman.prototype.update = function (du) {
-    if (this.lifeSpan < 0)
-    {
-        entityManager.switchModes();
-        this.lifeSpan = 15 * SECS_TO_NOMINALS;
-    }
-    this.lifeSpan -= du;
-
     entityManager.checkCollide();
-
     var prevX = this.x;
     var prevY = this.y;
     var nextX = prevX + this.xVel;
@@ -111,15 +97,12 @@ Pacman.prototype.update = function (du) {
     if (keys[this.GO_RIGHT] || this.flag === "right") {
         this.turn("right", this.cy, rail, 1, 0);
     }
-
     else if (keys[this.GO_LEFT] || this.flag === "left") {
         this.turn("left", this.cy, rail, -1, 0);
     }
-
     else if (keys[this.GO_UP] || this.flag === "up") {
         this.turn("up", this.cx, rail, 0, -1);
     }
-
     else if (keys[this.GO_DOWN] || this.flag === "down") {
         this.turn("down", this.cx, rail, 0, 1);
     }
@@ -127,9 +110,6 @@ Pacman.prototype.update = function (du) {
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
 
-    //console.log(this.x + " " + this.y);
-    //console.log(Gameboard.prototype.tileArray[187].pos)
-    //console.log()
     if (this.checkMazeCollision(this.xVel, this.yVel, newNextX, newNextY)) {
         this.flag = "";
         this.halt();

@@ -5,6 +5,7 @@ var entityManager = {
     _gameboard    : [],
     _pacman       : [],
     _ghost        : [],
+    _timer        : [],
 
     // "PRIVATE" METHODS
     _forEachOf : function(aCategory, fn) {
@@ -19,23 +20,29 @@ var entityManager = {
     // i.e. thing which need `this` to be defined.
     //
     deferredSetup : function () {
-        this._categories = [this._gameboard, this._pacman, this._ghost];
+        this._categories = [this._gameboard, this._pacman, this._ghost, this._timer];
     },
     
     init: function() {
         this.generatePacman();
         this.generateGameboard();
         this.generateGhost();
+        this.generateTimer();
     },
 
+    resetTimer : function() {
+        this._timer[0].reset(); 
+    },
+
+    generateTimer : function(descr) {
+        this._timer.push(new Timer(descr));
+    },
 
     generateGameboard : function(descr) {
         this._gameboard.push(new Gameboard(descr));
     },
 
     generatePacman : function(descr) {
-        //this._pacman.push(new Pacman(descr));
-
         this._pacman.push(new Pacman({
             x : 24*10,
             y : 24*13,
@@ -52,7 +59,6 @@ var entityManager = {
         var pos = [[240, 216], [216, 192], [240, 192], [264, 192]];
         var targets = [[1, 1], [1, 17], [19, 17], [19, 1]];
         var initialPos = [[10, 9], [9, 8], [10, 8], [9, 9]];
-        
 
         this._ghost.push(new Ghost({
             x : pos[0][0],           
@@ -107,15 +113,22 @@ var entityManager = {
 
     setMode : function(mode) {
         for (var i = 0; i < this._ghost.length; ++i) {
-            this._ghost[i].setMode(mode);
+            if (mode === 'frightened' && this._ghost[i].mode === 'dead') {
+                this._ghost[i].setMode('dead');
+            }
+            else {
+                this._ghost[i].setMode(mode);
+            }
         }
+        this.resetTimer();
     },
 
+    //set ghost modes to scatter/chase
     switchModes : function() {
         for (var i = 0; i < this._ghost.length; i++) {
-            if (this._ghost[i].mode === 'scatter') {
-                console.log('entity');
-                this._ghost[i].setMode('chase');
+            var ghost = this._ghost[i];
+            if (ghost.mode === 'scatter') {// || this._ghost[i].mode === 'frightened') {
+                ghost.setMode('chase');
                 if (i === 3) {
                     this._ghost[0].setMode('scatter');
                 }
@@ -127,14 +140,16 @@ var entityManager = {
         }
     },
 
+    //check if pacman has eaten ghost
     checkCollide : function() {
         var pacman = this._pacman[0];
         for (var i = 0; i < this._ghost.length; i++) {
             var ghost = this._ghost[i];
             if (this._ghost[i].mode === 'frightened' && 
-                (ghost.x <= pacman.cx && pacman.cx <= ghost.x+tile_width) &&
-                (ghost.y <= pacman.cy && pacman.cy <= ghost.y+tile_width)) {
+               (ghost.x <= pacman.cx && pacman.cx <= ghost.x+tile_width) &&
+               (ghost.y <= pacman.cy && pacman.cy <= ghost.y+tile_width)) {
                 ghost.setMode('dead');
+                this.resetTimer();
             }
         }
     }
