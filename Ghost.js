@@ -135,10 +135,10 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
 
 Ghost.prototype.update = function (du) {
     var ghostArray = entityManager._ghost;
-    console.log(ghostArray[0].mode + ": " + ghostArray[0].color + 
-        ", " + ghostArray[1].mode + ": " + ghostArray[1].color + ", " + 
-        ghostArray[2].mode + ": " + ghostArray[2].color + 
-        ", " + ghostArray[3].mode + ": " +ghostArray[3].color);
+    //console.log(ghostArray[0].mode + ": " + ghostArray[0].color + 
+      //  ", " + ghostArray[1].mode + ": " + ghostArray[1].color + ", " + 
+        //ghostArray[2].mode + ": " + ghostArray[2].color + 
+        //", " + ghostArray[3].mode + ": " +ghostArray[3].color);
     
 
     var prevX = this.x;
