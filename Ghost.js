@@ -133,6 +133,8 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 };
 
+
+
 Ghost.prototype.update = function (du) {
     var prevX = this.x;
     var prevY = this.y;
@@ -141,7 +143,7 @@ Ghost.prototype.update = function (du) {
     var halfwidth = 12;
     var board = Gameboard.prototype;
     var pacman = entityManager._pacman[0];
-    
+
     this.checkPacmanCollision(pacman);
 
     if (this.x > g_canvas.width) {
@@ -152,8 +154,10 @@ Ghost.prototype.update = function (du) {
     }
 
     if (g_levelMap[this.tilePosY][this.tilePosX] === 1) {
+        console.log("bögg");
         console.log(this.color + ", x " + this.tilePosX + ", y " + this.tilePosY);
-        if (this.direction === 'down') {
+
+        /*if (this.direction === 'down') {
             this.turn("up", this.cx, rail, 0, -1);
         }
         else if (this.direction === 'up') {
@@ -164,7 +168,7 @@ Ghost.prototype.update = function (du) {
         }
         else if (this.direction === 'left') {
             this.turn("right", this.cy, rail, 1, 0);
-        }
+        }*/
     }
     
     else {
