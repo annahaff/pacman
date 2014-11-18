@@ -19,3 +19,6 @@ var SECS_TO_NOMINALS = 1000/NOMINAL_UPDATE_INTERVAL;
 
 var tile_width = 24;
 var tile_height = 24;
+
+var g_sound = true;
+

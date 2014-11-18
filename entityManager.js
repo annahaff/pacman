@@ -1,3 +1,6 @@
+
+
+
 "use strict";
 /*jslint nomen: true, white: true, plusplus: true*/
 
@@ -6,6 +9,7 @@ var entityManager = {
     _pacman       : [],
     _ghost        : [],
     _timer        : [],
+    _points       : [],
 
     // "PRIVATE" METHODS
     _forEachOf : function(aCategory, fn) {
@@ -20,7 +24,7 @@ var entityManager = {
     // i.e. thing which need `this` to be defined.
     //
     deferredSetup : function () {
-        this._categories = [this._gameboard, this._pacman, this._ghost, this._timer];
+        this._categories = [this._gameboard, this._pacman, this._ghost, this._timer, this._points];
     },
     
     init: function() {
@@ -175,7 +179,13 @@ var entityManager = {
                (ghost.y <= pacman.cy && pacman.cy <= ghost.y+tile_width)) {
                 ghost.setMode('dead');
                 var snd = new Audio("pacman_eatghost.wav"); // buffers automatically when created
-                snd.play();
+                if(g_sound) snd.play();
+                pacman.score = pacman.score + 200
+                this._points.push(new Points({
+                    x : ghost.x,
+                    y : ghost.y,
+                    points : 200
+                }));
             }
         }
     },
@@ -196,8 +206,9 @@ var entityManager = {
 
         this.init();
         var gameboard = this._gameboard[0];
-        gameboard.clearBoard();
-        gameboard.fillBoard();
+        gameboard.reset(1);
+        //gameboard.clearBoard();
+        //gameboard.fillBoard();
 
         main.init();
     },

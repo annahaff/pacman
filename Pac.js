@@ -33,7 +33,7 @@ Pacman.prototype.positions = [18, 18, 18, 18];   //starting position
 Pacman.prototype.reset = function () {
     this.setPos(this.reset_x, this.reset_y);
     this.positions = this.initialPos;
-    this.xVel = 1;
+    this.xVel = 0;
 };
 
 var rail = [];

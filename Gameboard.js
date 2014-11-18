@@ -14,30 +14,29 @@ function Gameboard(descr) {
 }
 
 Gameboard.prototype.foodCounter = 0;
+Gameboard.prototype.foodLeft = 0;
 
 // Initial, inheritable, default values
 Gameboard.prototype.tileArray = [];
-var g_levelMap = [                
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //1
-                [1, 2, 2, 2, 4, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 4, 2, 2, 2, 1], //2
-                [1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1], //3
-                [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1], //4
-                [1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1], //5
-                [1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 2, 2, 2, 1], //6
-                [1, 1, 1, 1, 2, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1], //7
-                [1, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 1, 1], //8
-                [0, 2, 2, 2, 2, 2, 2, 2, 0, 3, 3, 3, 0, 2, 2, 2, 2, 2, 2, 2, 0], //9
-                [1, 1, 1, 1, 2, 1, 1, 1, 0, 3, 3, 3, 0, 1, 1, 1, 2, 1, 1, 1, 1], //10
-                [1, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 1, 1], //11
-                [1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1], //12
-                [1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1], //13
-                [1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1], //14
-                [1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1], //15
-                [1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 1], //16
-                [1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1], //17
-                [1, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 1], //18    
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], //19              
-            ];
+Gameboard.prototype.level = 1;
+var g_levelMap = g_levels[0];
+
+Gameboard.prototype.nextLevel = function() {
+
+    if(this.level === g_levels.length){
+        // YOU WIN!!
+
+        // kalla á win aðferð?
+
+        main.gameOver();
+    }
+    this.reset(this.level+1);
+
+    entityManager._pacman[0].reset();
+    entityManager._ghost[0].reset();
+
+    main.init();
+}
 
 
 //tileArray consists of Tile objects...
@@ -50,10 +49,10 @@ Gameboard.prototype.fillBoard = function() {
             var xPos = j*24;
             var yPos = i*24;
             var mapPos = [j, i];
-            if(g_levelMap[i][j] === 1) {var type = "maze";}              // m
-            else if(g_levelMap[i][j] === 2) {var type = "food";}         // f
-            else if(g_levelMap[i][j] === 3) {var type = "ghostbox";}     // g
-            else if(g_levelMap[i][j] === 4) {var type = "magicBean";}    // b
+            if(g_levelMap[i][j] === 1) {var type = "maze";}                                 // m
+            else if(g_levelMap[i][j] === 2) {var type = "food"; this.foodLeft++; }          // f
+            else if(g_levelMap[i][j] === 3) {var type = "ghostbox";}                        // g
+            else if(g_levelMap[i][j] === 4) {var type = "magicBean"; this.foodLeft++ }      // b
             else {var type = "foodeaten";}
 
             this.tileArray.push(new Tile(xPos, yPos, type, mapPos)); 
@@ -87,6 +86,10 @@ Gameboard.prototype.update = function (du) {
         this.tileArray[220].type = "cherry";
     }
 
+    if(this.foodLeft === 0) {
+        this.nextLevel();
+    }
+
 };
 
 
@@ -109,6 +112,17 @@ Gameboard.prototype.clearBoard = function(){
     while(this.tileArray.length > 0){
         this.tileArray.pop();
     }
+};
+
+Gameboard.prototype.reset = function(level){
+    this.level = level;
+    this.clearBoard();
+    g_levelMap = g_levels[level - 1];
+    this.fillBoard();
+    this.firstCherryEaten = false;
+    this.secondCherryEaten = false;
+    this.foodCounter = 0;
+    this.foodLeft = 0;
 }
 
 Gameboard.prototype.fillBoard();

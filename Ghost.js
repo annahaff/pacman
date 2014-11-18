@@ -223,7 +223,7 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
         if (this.mode === 'chase' || this.mode === 'scatter') {
             pacman.lives--;
             var snd = new Audio("pacman_death.wav"); // buffers automatically when created
-            snd.play();
+            if(g_sound) snd.play();
             pacman.reset();
             this.reset();
             if (pacman.lives === 0) {
