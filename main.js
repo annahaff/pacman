@@ -77,6 +77,11 @@ main.gameOver = function () {
     console.log("gameOver: quitting...");
 };
 
+main.win = function(){
+    this._isGameOver = true
+    console.log("You win, congrats");
+}
+
 // Simple voluntary quit mechanism
 //
 var KEY_QUIT = 'Q'.charCodeAt(0);

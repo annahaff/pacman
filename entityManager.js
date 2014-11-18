@@ -54,7 +54,7 @@ var entityManager = {
             height : tile_height,
             cx : 24+tile_width/2,
             cy : 24+tile_height/2,
-            lives : 3,
+            lives : 999,
             score : 0
         }));
     },
@@ -192,15 +192,18 @@ var entityManager = {
 
     restart : function() {
         console.log("pressing restart");
+        //g_isUpdatePaused = true;
         this.clearEverything();
+        this.init();
         main._isGameOver = false;
         document.getElementById('gameOver').style.display = "none";
 
-        this.init();
         var gameboard = this._gameboard[0];
-        gameboard.reset(1);
+
+        gameboard.reset(gameboard.level);
         //gameboard.clearBoard();
         //gameboard.fillBoard();
+       // g_isUpdatePaused = false;
 
         main.init();
 

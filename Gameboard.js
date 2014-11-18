@@ -22,13 +22,15 @@ Gameboard.prototype.level = 1;
 var g_levelMap = g_levels[0];
 
 Gameboard.prototype.nextLevel = function() {
+    //console.log("caller is " + arguments.callee.caller);
+    console.log("nextLevel()");
 
     if(this.level === g_levels.length){
         // YOU WIN!!
 
         // kalla á win aðferð?
 
-        main.gameOver();
+        main.win();
     }
     this.reset(this.level+1);
 
@@ -41,6 +43,13 @@ Gameboard.prototype.nextLevel = function() {
 
 //tileArray consists of Tile objects...
 Gameboard.prototype.fillBoard = function() {
+    //console.log(g_levelMap);
+    //g_levelMap = g_levels[0];
+    //console.log(g_levels);
+    //console.log("g_levelMap.length: " + g_levelMap.length);
+    
+    //console.log("caller is " + arguments.callee.caller); //caller er this.reset 
+    //console.log("level: " + this.level + ", g_levelMap: " + g_levelMap + ", g_levels: " + g_levels);
     for(var i = 0; i < g_levelMap.length; i++){
        // console.log("i : " + i);
        // console.log("g_levelMap.length[i] : " + g_levelMap[0].length);
@@ -55,9 +64,10 @@ Gameboard.prototype.fillBoard = function() {
             else if(g_levelMap[i][j] === 4) {var type = "magicBean"; this.foodLeft++ }      // b
             else {var type = "foodeaten";}
 
-            this.tileArray.push(new Tile(xPos, yPos, type, mapPos)); 
+            this.tileArray.push(new Tile(xPos, yPos, type, mapPos));
         }
     }
+    console.log("foodLeft = " + this.foodLeft);
 };
 
 Gameboard.prototype.firstCherryEaten = false;
@@ -85,7 +95,7 @@ Gameboard.prototype.update = function (du) {
         var cherryPosition = 10 + 10*g_levelMap[10].length; //frá 2d í 1d fylkja index
         this.tileArray[220].type = "cherry";
     }
-
+    
     if(this.foodLeft === 0) {
         this.nextLevel();
     }
@@ -115,14 +125,20 @@ Gameboard.prototype.clearBoard = function(){
 };
 
 Gameboard.prototype.reset = function(level){
+    //console.log("caller is " + arguments.callee.caller); // caller er next level
     this.level = level;
     this.clearBoard();
     g_levelMap = g_levels[level - 1];
-    this.fillBoard();
+    
     this.firstCherryEaten = false;
     this.secondCherryEaten = false;
     this.foodCounter = 0;
     this.foodLeft = 0;
+    //skapar endalausa lykkju þar sem endalaust er kallað á next level
+    //þegar foodleft = 0;
+    //this.foodLeft = 0; 
+    
+    this.fillBoard();
 };
 
 Gameboard.prototype.fillBoard();
