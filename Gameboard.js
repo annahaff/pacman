@@ -50,7 +50,7 @@ Gameboard.prototype.fillBoard = function() {
     
     //console.log("caller is " + arguments.callee.caller); //caller er this.reset 
     //console.log("level: " + this.level + ", g_levelMap: " + g_levelMap + ", g_levels: " + g_levels);
-    g_levelMap = g_levels[1];
+
     for(var i = 0; i < g_levelMap.length; i++){
        // console.log("i : " + i);
        // console.log("g_levelMap.length[i] : " + g_levelMap[0].length);

@@ -22,12 +22,14 @@ Timer.prototype.reset = function () {
 
 
 Timer.prototype.update = function (du) {
-    //console.log(this.secs);
+    //console.log(this.secs/SECS_TO_NOMINALS);
     if (this.secs < 0) {
         entityManager.switchModes();
         this.reset();
     }
+
     this.secs -= du;
+
 };
 
 Timer.prototype.render = function (ctx) {

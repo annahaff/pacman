@@ -153,9 +153,16 @@ Ghost.prototype.update = function (du) {
         this.x = g_canvas.width;
     }
 
-    if (g_levelMap[this.tilePosY][this.tilePosX] === 1) {
+    //if((this.x%1 != 0) || (this.y%1 != 0)) console.log(this);
+    if (g_levelMap[this.tilePosY][this.tilePosX] === 1) { //1 er maze
+        console.log(this);
         console.log("bögg");
-        console.log(this.color + ", x " + this.tilePosX + ", y " + this.tilePosY);
+        //console.log(this.color + ", x " + this.tilePosX + ", y " + this.tilePosY);
+        while(g_levelMap[this.tilePosY][this.tilePosX] === 1)
+            this.fixMe();
+        console.log(this);
+
+        console.log("\n\n");
 
         /*if (this.direction === 'down') {
             this.turn("up", this.cx, rail, 0, -1);
@@ -171,7 +178,7 @@ Ghost.prototype.update = function (du) {
         }*/
     }
     
-    else {
+    //else {
         //chase mode
         if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
             var neighbors = this.checkNeighbors();
@@ -204,7 +211,7 @@ Ghost.prototype.update = function (du) {
                 }
             }
         }
-    }
+    //}
     
     var newNextX = this.x + this.xVel;
     var newNextY = this.y + this.yVel;
@@ -237,6 +244,26 @@ Ghost.prototype.checkPacmanCollision = function(pacman) {
         }
     }
     document.getElementById('lives').innerHTML = "Lives left: " + pacman.lives;        
+};
+
+Ghost.prototype.fixMe = function(){
+    console.log("fixing: ", this.color);
+    if(this.yVel < 0) {
+        this.y += 0.5;
+    }
+    if(this.yVel > 0) {
+        this.y -= 0.5;
+    }
+    if(this.xVel < 0) {
+        this.x += 0.5;
+    }
+    if(this.xVel > 0) {
+        this.x -= 0.5;
+    }
+    this.cy = this.y + 12;
+    this.cx = this.x + 12;
+    this.tilePosX = Math.floor(this.cx/tile_width);
+    this.tilePosY = Math.floor(this.cy/tile_width);
 };
 
 Ghost.prototype.halt = function() {
