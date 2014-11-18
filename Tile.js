@@ -77,8 +77,8 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 this.type = "foodeaten";
                 board.cherryEaten();
                 entityManager._points.push(new Points({
-                    x : ghost.x,
-                    y : ghost.y,
+                    x : pacman.x,
+                    y : pacman.y,
                     points : 100
                 }));
             }
@@ -114,8 +114,8 @@ Tile.prototype.collidesWith = function (prevX, prevY, nextX, nextY) {
                 this.type = "foodeaten";
                 board.cherryEaten();
                 entityManager._points.push(new Points({
-                    x : ghost.x,
-                    y : ghost.y,
+                    x : pacman.x,
+                    y : pacman.y,
                     points : 100
                 }));
             }

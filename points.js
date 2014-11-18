@@ -32,11 +32,9 @@ Points.prototype.update = function (du) {
 
 Points.prototype.render = function (ctx) {
     ctx.save();
-    util.fillBox(ctx, this.x, this.y-10, 30, 20, "white");
-    ctx.fillStyle = "black";
-    ctx.font = "15px Arial";
-    ctx.fillText(this.points, this.x+2, this.y+8);
-    
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText(this.points, this.x+2, this.y+8);   
     ctx.restore();
 };
 

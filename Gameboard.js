@@ -36,7 +36,7 @@ Gameboard.prototype.nextLevel = function() {
     entityManager._ghost[0].reset();
 
     main.init();
-}
+};
 
 
 //tileArray consists of Tile objects...
@@ -123,7 +123,7 @@ Gameboard.prototype.reset = function(level){
     this.secondCherryEaten = false;
     this.foodCounter = 0;
     this.foodLeft = 0;
-}
+};
 
 Gameboard.prototype.fillBoard();
 

@@ -191,14 +191,6 @@ var entityManager = {
     },
 
     restart : function() {
-        /*var pacman = this._pacman[0];
-        main._isGameOver = false;
-        main.init();
-        pacman.score = 0;
-        pacman.lives = 3;
-        document.getElementById('gameOver').style.display = "none";
-        var gameboard = this._gameboard[0];
-        gameboard.fillBoard();*/
         console.log("pressing restart");
         this.clearEverything();
         main._isGameOver = false;
@@ -211,6 +203,20 @@ var entityManager = {
         //gameboard.fillBoard();
 
         main.init();
+
+
+                /*gameboard.fillBoard();
+        console.log("pressing restart");
+        this.clearEverything();
+        main._isGameOver = false;
+        document.getElementById('gameOver').style.display = "none";
+
+        this.init();
+        var gameboard = this._gameboard[0];
+        gameboard.clearBoard();
+        gameboard.fillBoard();
+
+        main.init();*/
     },
 
     clearEverything : function(){
