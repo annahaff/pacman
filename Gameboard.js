@@ -31,20 +31,23 @@ Gameboard.prototype.nextLevel = function() {
         // kalla á win aðferð?
 
         main.win();
+        return;
     }
+ 
     this.reset(this.level+1);
 
     entityManager._pacman[0].reset();
     entityManager._ghost[0].reset();
 
-    main.init();
+    //main.init();
 };
 
 
 //tileArray consists of Tile objects...
 Gameboard.prototype.fillBoard = function() {
     //console.log(g_levelMap);
-    //g_levelMap = g_levels[0];
+    //g_levelMap = g_levels[2];
+    //this.level = 3;
     //console.log(g_levels);
     //console.log("g_levelMap.length: " + g_levelMap.length);
     
@@ -86,6 +89,7 @@ Gameboard.prototype.cherryEaten = function(){
 }
 
 Gameboard.prototype.update = function (du) {
+
     //setja cherry a stað 10, 10 í tile position (fyrir neðan draugabox);
     if(this.foodCounter > 49 && !this.firstCherryEaten){
         var cherryPosition = 10 + 10*g_levelMap[10].length; //frá 2d í 1d fylkja index

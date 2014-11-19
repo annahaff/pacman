@@ -54,7 +54,7 @@ var entityManager = {
             height : tile_height,
             cx : 24+tile_width/2,
             cy : 24+tile_height/2,
-            lives : 999,
+            lives : 10,
             score : 0
         }));
     },
