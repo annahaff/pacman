@@ -72,6 +72,20 @@ main._iterCore = function (dt) {
 
 main._isGameOver = false;
 
+main.pause = function () {
+    g_isUpdatePaused = true;
+};
+
+main.startNextLevel = function () {
+    g_isUpdatePaused = false;
+
+    document.getElementById('nextLevel').style.display = "none";
+    document.getElementById('gameStart').style.display = "none";
+
+    var snd = new Audio("pacman_beginning.wav"); // buffers automatically when created
+    if(g_sound) snd.play();
+};
+
 main.gameOver = function () {
     this._isGameOver = true;
     console.log("gameOver: quitting...");
@@ -80,6 +94,7 @@ main.gameOver = function () {
 main.win = function(){
     this._isGameOver = true
     console.log("You win, congrats");
+    document.getElementById('gameWon').style.display = "block";
 }
 
 // Simple voluntary quit mechanism
@@ -140,5 +155,9 @@ main.init = function () {
     //g_ctx.fillStyle = "white";
     
     this._requestNextIteration();
+
+    this.pause();
+    document.getElementById('gameStart').style.display = "block";
+
 
 };

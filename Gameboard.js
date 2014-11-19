@@ -23,7 +23,7 @@ var g_levelMap = g_levels[0];
 
 Gameboard.prototype.nextLevel = function() {
     //console.log("caller is " + arguments.callee.caller);
-    console.log("nextLevel()");
+    //console.log("nextLevel()");
 
     if(this.level === g_levels.length){
         // YOU WIN!!
@@ -40,6 +40,11 @@ Gameboard.prototype.nextLevel = function() {
     entityManager._ghost[0].reset();
 
     //main.init();
+
+    document.getElementById('nextLevel').style.display = "block";
+    main.pause();
+
+
 };
 
 

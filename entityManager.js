@@ -197,6 +197,7 @@ var entityManager = {
         this.init();
         main._isGameOver = false;
         document.getElementById('gameOver').style.display = "none";
+        document.getElementById('gameWon').style.display = "none";
 
         var gameboard = this._gameboard[0];
 
