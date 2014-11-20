@@ -211,7 +211,14 @@ Ghost.prototype.updateChaseTarget = function(){
     if(this.mode === 'scatter'){
         this.chaseTargetX = this.targetX*tile_width;
         this.chaseTargetY = this.targetY*tile_width;
+        return;
     }
+
+    if(this.color=== 'pink'){
+        this.setPinkChaseTarget();
+        return;
+    }
+
 
     else{
         this.chaseTargetX = entityManager._pacman[0].x;
@@ -220,7 +227,24 @@ Ghost.prototype.updateChaseTarget = function(){
 
 };
 
+Ghost.prototype.setPinkChaseTarget = function(){
+    //set target position 4 reiti áfram m.v. packman, til að króa af
+    var x = entityManager._pacman[0].cx + 4*24*entityManager._pacman[0].xVel;
+    var y = entityManager._pacman[0].cy + 4*24*entityManager._pacman[0].yVel;
 
+    //ef pacman er nálægt pinky, þá reyna að ná honum beint
+    if(Math.abs(this.cx - x) < 48) x = entityManager._pacman[0].cx;
+    if(Math.abs(this.cy - y ) < 48) y = entityManager._pacman[0].cy;
+
+    //setja ekki target pos útfyrir borðið
+    if(x < 0) x = 0;
+    if(x > g_canvas.width) x = g_canvas.width;
+    if(y < 0) y = 24;
+    if(y > g_canvas.height) y = g_canvas.height - 24;
+
+    this.chaseTargetX = x;
+    this.chaseTargetY = y;
+};
 
 Ghost.prototype.update = function (du) {
     var prevX = this.x;
