@@ -71,13 +71,15 @@ var g_images = {};
 function requestPreloads() {
     var requiredImages = {
 	pacman : "https://notendur.hi.is/frh12/Lokaverkefni/pacman.png",
-    cherry : "cherry.png"
+    cherry : "cherry.png",
+    ghostbox : "ghostbox.png"
     };
     imagesPreload(requiredImages, g_images, preloadDone);
 }
 
 var g_sprites = [];
 var g_cherrySprite;
+var g_ghostBoxSprite;
 
 function preloadDone() {
 
@@ -96,6 +98,7 @@ function preloadDone() {
     }
 
     g_cherrySprite = new Sprite(g_images.cherry, 0, 0, 24, 24);
+    g_ghostBoxSprite = new Sprite(g_images.ghostbox, 0, 0, 82, 58);
 
     main.init();
 }

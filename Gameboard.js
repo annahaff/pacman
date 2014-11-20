@@ -51,10 +51,11 @@ Gameboard.prototype.nextLevel = function() {
 //tileArray consists of Tile objects...
 Gameboard.prototype.fillBoard = function() {
     //console.log(g_levelMap);
-    //g_levelMap = g_levels[2];
-    //this.level = 3;
+
     //console.log(g_levels);
     //console.log("g_levelMap.length: " + g_levelMap.length);
+    //g_levelMap = g_levels[2];
+    //this.level = 3;
     
     //console.log("caller is " + arguments.callee.caller); //caller er this.reset 
     //console.log("level: " + this.level + ", g_levelMap: " + g_levelMap + ", g_levels: " + g_levels);
@@ -119,7 +120,9 @@ Gameboard.prototype.render = function (ctx) {
         Tile.prototype.makeTile(ctx, this.tileArray[i].x, this.tileArray[i].y, 
                                 this.tileArray[i].type);     
     }
-
+    var ghostboxStartX = 9*24;
+    var ghostboxStartY = 8*24;
+    g_ghostBoxSprite.drawAt(ctx, ghostboxStartX-5, ghostboxStartY-5);
 
     /*
     ctx.save();

@@ -54,7 +54,7 @@ var entityManager = {
             height : tile_height,
             cx : 24+tile_width/2,
             cy : 24+tile_height/2,
-            lives : 10,
+            lives : 15,
             score : 0
         }));
     },
@@ -199,15 +199,18 @@ var entityManager = {
         document.getElementById('gameOver').style.display = "none";
         document.getElementById('gameWon').style.display = "none";
 
+
+
         var gameboard = this._gameboard[0];
 
-        gameboard.reset(gameboard.level);
+        gameboard.reset(1);
         //gameboard.clearBoard();
         //gameboard.fillBoard();
-       // g_isUpdatePaused = false;
+        
 
         main.init();
-
+        g_isUpdatePaused = false;
+        document.getElementById('gameStart').style.display = "none";
 
                 /*gameboard.fillBoard();
         console.log("pressing restart");

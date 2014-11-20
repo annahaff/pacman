@@ -27,8 +27,9 @@ Tile.prototype.makeTile = function(ctx, x, y, type) {
         util.fillBox(ctx, x+3, y+3, tile_width-3, tile_height-3, 'lawngreen') 
     }
     else if (type === "ghostbox") {
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(x+1, y+1, tile_width-1, tile_height-1);
+        //ctx.strokeStyle = "white";
+        //ctx.strokeRect(x+1, y+1, tile_width-1, tile_height-1);
+        
     }
     else if (type === "foodeaten") {
         util.fillBox(ctx, x, y, tile_width, tile_height, 'black');
