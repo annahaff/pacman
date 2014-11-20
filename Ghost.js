@@ -78,23 +78,78 @@ Array.prototype.min = function() {
 // check legal directions for ghosts (since they cannot reverse direction)
 Ghost.prototype.checkNeighbors = function () {
     var legal_neighbors = [];
+
+    if(this.isInsideGhostBox()){
+        return this.ghostBoxLegalNeighbors();
+    }
+
     // check if tile above is a maze
-    if(!(g_levelMap[this.tilePosY-1][this.tilePosX] === 1) && !(this.direction === "down")) {
+    if(!(g_levelMap[this.tilePosY-1][this.tilePosX] === 1) 
+        && !(this.direction === "down")
+        && !(g_levelMap[this.tilePosY-1][this.tilePosX] === 3)) {
+
         legal_neighbors.push([this.tilePosX, this.tilePosY-1]);
     }
     // tile below
-    if(!(g_levelMap[this.tilePosY+1][this.tilePosX] === 1) && !(this.direction === "up")) {
+    if(!(g_levelMap[this.tilePosY+1][this.tilePosX] === 1) 
+        && !(this.direction === "up")
+        && !(g_levelMap[this.tilePosY+1][this.tilePosX] === 3)) {
+
         legal_neighbors.push([this.tilePosX, this.tilePosY+1]);
     }
     // tile to the left
-    if(!(g_levelMap[this.tilePosY][this.tilePosX-1] === 1) && !(this.direction === "right")) {
+    if(!(g_levelMap[this.tilePosY][this.tilePosX-1] === 1) 
+        && !(this.direction === "right")
+        && !(g_levelMap[this.tilePosY][this.tilePosX-1] === 3)) {
+
         legal_neighbors.push([this.tilePosX-1, this.tilePosY]);
     }
     // tile to the right
-    if(!(g_levelMap[this.tilePosY][this.tilePosX+1] === 1) && !(this.direction === "left")) {
+    if(!(g_levelMap[this.tilePosY][this.tilePosX+1] === 1) 
+        && !(this.direction === "left")
+        && !(g_levelMap[this.tilePosY][this.tilePosX+1] === 3)) {
+
         legal_neighbors.push([this.tilePosX+1, this.tilePosY]);
     }
+
+    //Ef tile fyrir neðan er miðja á ghost box
+    if(this.tilePosY+1 === 8 && this.tilePosX === 10 && this.mode === 'dead'){
+        legal_neighbors.push([this.tilePosX, this.tilePosY+1]);
+        console.log("setting legal neighbor to ghostbox?")
+        console.log(legal_neighbors);
+    }
+
+
     return legal_neighbors;
+};
+
+Ghost.prototype.ghostBoxLegalNeighbors = function(){
+    var legal_neighbors = [];
+        // check if tile above is a ghostbox or the middle tile
+        //above the box
+    if((g_levelMap[this.tilePosY-1][this.tilePosX] === 3) || 
+        (this.tilePosY-1 === 7 && this.tilePosX === 10 )) {
+        legal_neighbors.push([this.tilePosX, this.tilePosY-1]);
+    }
+    // tile below
+    if(g_levelMap[this.tilePosY+1][this.tilePosX] === 3) {
+        legal_neighbors.push([this.tilePosX, this.tilePosY+1]);
+    }
+    // tile to the left
+    if(g_levelMap[this.tilePosY][this.tilePosX-1] === 3) {
+        legal_neighbors.push([this.tilePosX-1, this.tilePosY]);
+    }
+    // tile to the right
+    if(g_levelMap[this.tilePosY][this.tilePosX+1] === 3) {
+        legal_neighbors.push([this.tilePosX+1, this.tilePosY]);
+    }
+
+    return legal_neighbors;
+}
+
+
+Ghost.prototype.isInsideGhostBox = function(){
+    return g_levelMap[this.tilePosY][this.tilePosX] === 3;
 };
 
 // if ghost is in chase mode everything works
@@ -133,6 +188,38 @@ Ghost.prototype.frightened = function (neighbors, tilePosX, tilePosY) {
     }  
 };
 
+Ghost.prototype.updateChaseTarget = function(){
+
+
+    if(this.mode === 'dead'){
+        console.log("setting target to ghostbox")
+        this.chaseTargetX = 10*24 + 12;
+        this.chaseTargetY = 8*24 + 12;
+        return;
+    }
+
+    if(this.isInsideGhostBox() && this.mode !== 'dead'){
+        console.log(this);
+        console.log("is inside the ghostbox\n\n");
+
+        //x og y á tile beint fyrir ofan miðju ghost box
+        this.chaseTargetX = 10*24 + 12;
+        this.chaseTargetY = 7*24 + 12;
+        return;
+    }
+
+    if(this.mode === 'scatter'){
+        this.chaseTargetX = this.targetX*tile_width;
+        this.chaseTargetY = this.targetY*tile_width;
+    }
+
+    else{
+        this.chaseTargetX = entityManager._pacman[0].x;
+        this.chaseTargetY = entityManager._pacman[0].y;
+    }
+
+};
+
 
 
 Ghost.prototype.update = function (du) {
@@ -145,6 +232,9 @@ Ghost.prototype.update = function (du) {
     var pacman = entityManager._pacman[0];
 
     this.checkPacmanCollision(pacman);
+
+    this.updateChaseTarget();
+    
 
     if (this.x > g_canvas.width) {
         this.x = 0;
@@ -182,7 +272,8 @@ Ghost.prototype.update = function (du) {
         //chase mode
         if (this.mode === 'chase' && this.tilePosX != undefined && this.tilePosY != undefined) {
             var neighbors = this.checkNeighbors();
-            var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
+            //var shortestDist = this.shortestDistance(neighbors, [pacman.x, pacman.y]);
+            var shortestDist = this.shortestDistance(neighbors, [this.chaseTargetX, this.chaseTargetY]);
             if (shortestDist != undefined) {
                 this.chase(shortestDist, this.tilePosX, this.tilePosY);          
             }
@@ -190,7 +281,8 @@ Ghost.prototype.update = function (du) {
         //scatter mode
         else if (this.mode === 'scatter') {
             var neighbors = this.checkNeighbors();
-            var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
+            //var shortestDist = this.shortestDistance(neighbors, [this.targetX*tile_width, this.targetY*tile_height]);
+            var shortestDist = this.shortestDistance(neighbors, [this.chaseTargetX, this.chaseTargetY]);
             if (shortestDist != undefined) {
                 this.chase(shortestDist, this.tilePosX, this.tilePosY);
             }
@@ -202,11 +294,17 @@ Ghost.prototype.update = function (du) {
         }
         //dead mode
         else if (this.mode === 'dead') {
+            
             var neighbors = this.checkNeighbors();
-            var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*tile_width, this.initialPos[1]*tile_height]);
+            /*if(this.color = "blue"){
+            console.log(this);
+            console.log(neighbors);}*/
+            //var shortestDist = this.shortestDistance(neighbors, [this.initialPos[0]*tile_width, this.initialPos[1]*tile_height]);
+            var shortestDist = this.shortestDistance(neighbors, [this.chaseTargetX, this.chaseTargetY]);
             if (shortestDist != undefined) {
                 this.chase(shortestDist, this.tilePosX, this.tilePosY);
-                if (this.tilePosX === this.initialPos[0] && this.tilePosY === this.initialPos[1]) {
+                //if (this.tilePosX === this.initialPos[0] && this.tilePosY === this.initialPos[1]) {
+                if(this.tilePosY === 9 && this.tilePosX === 10){
                     this.setMode('chase');
                 }
             }
@@ -334,7 +432,7 @@ Ghost.prototype.render = function (ctx) {
             else if (this.color === 'orange') this.positionsG = [44, 45, 44, 45];
         }
     }
-    if(!g_isUpdatePaused)
+    //if(!g_isUpdatePaused)
     g_sprites[this.positionsG[this.renderCount]].drawAt(ctx, this.x, this.y) ;
     this.d += 0.5;
     if (this.d % 1 === 0) ++this.renderCount;   
@@ -344,6 +442,9 @@ Ghost.prototype.render = function (ctx) {
 Ghost.prototype.setPos = function (x, y) {
     this.x = x;
     this.y = y;
+    this.tilePosX = Math.floor((this.x+12)/tile_width);
+    this.tilePosY = Math.floor((this.y+12)/tile_width);
+
 };
 
 Ghost.prototype.reset = function () {

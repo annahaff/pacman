@@ -78,6 +78,7 @@ main.pause = function () {
 
 main.startNextLevel = function () {
     g_isUpdatePaused = false;
+    g_doRender = true;
 
     document.getElementById('nextLevel').style.display = "none";
     document.getElementById('gameStart').style.display = "none";
